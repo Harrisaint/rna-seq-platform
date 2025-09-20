@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Grid, Slider, Typography } from '@mui/material'
-import { Api } from '../api/client'
+import { Api } from '../components/apiClient'
 import VolcanoPlot from '../components/VolcanoPlot'
 import MAPlot from '../components/MAPlot'
 

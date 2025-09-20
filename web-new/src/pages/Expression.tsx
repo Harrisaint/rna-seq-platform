@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Typography } from '@mui/material'
-import { Api } from '../api/client'
+import { Api } from '../components/apiClient'
 import PCAPlot from '../components/PCAPlot'
 
 const Expression: React.FC = () => {
