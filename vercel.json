@@ -1,13 +1,6 @@
 {
-  "builds": [
-    {
-      "src": "web-new/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "web-new/dist"
-      }
-    }
-  ],
+  "buildCommand": "cd web-new && npm run build",
+  "outputDirectory": "web-new/dist",
   "routes": [
     {
       "src": "/(.*)",
