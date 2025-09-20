@@ -1,8 +1,8 @@
 import React from 'react'
 import { Container, Grid, Slider, Typography } from '@mui/material'
-import { Api } from '@/api/client.ts'
-import VolcanoPlot from '@/components/VolcanoPlot.tsx'
-import MAPlot from '@/components/MAPlot.tsx'
+import { Api } from '../api/client'
+import VolcanoPlot from '../components/VolcanoPlot'
+import MAPlot from '../components/MAPlot'
 
 const Differential: React.FC = () => {
   const [padj, setPadj] = React.useState(0.1)

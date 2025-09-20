@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, TextField, Typography } from '@mui/material'
-import { Api } from '@/api/client.ts'
+import { Api } from '../api/client'
 
 const Explorer: React.FC = () => {
   const [q, setQ] = React.useState('')

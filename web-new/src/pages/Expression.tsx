@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Typography } from '@mui/material'
-import { Api } from '@/api/client.ts'
-import PCAPlot from '@/components/PCAPlot.tsx'
+import { Api } from '../api/client'
+import PCAPlot from '../components/PCAPlot'
 
 const Expression: React.FC = () => {
   const [pca, setPca] = React.useState<{ scores: any[]; variance: { PC1: number; PC2: number } } | null>(null)
