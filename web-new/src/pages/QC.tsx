@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Typography } from '@mui/material'
-import { Api } from '@/api/client'
+import { Api } from '@/api/client.ts'
 
 const QC: React.FC = () => {
   const [qc, setQc] = React.useState<any>(null)
