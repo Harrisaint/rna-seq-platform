@@ -13,6 +13,7 @@ import os
 
 # Get allowed origins from environment variable or default to localhost
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+print(f"ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
 
 app.add_middleware(
     CORSMiddleware,

@@ -9,21 +9,46 @@ import Pathways from './pages/Pathways'
 import Explorer from './pages/Explorer'
 import Navbar from './components/Navbar'
 
+// Create a wrapper component for each page that includes the data mode context
+const createPageWrapper = (PageComponent: React.ComponentType, pageTitle: string) => {
+  return () => {
+    const [mode, setMode] = useState<'demo' | 'live'>('demo')
+    
+    return (
+      <PageComponent 
+        mode={mode} 
+        onModeChange={setMode}
+        title={pageTitle}
+      />
+    )
+  }
+}
+
 const App: React.FC = () => {
   const [dark, setDark] = useState(true)
-  const theme = useMemo(() => createTheme({ palette: { mode: dark ? 'dark' : 'light' } }), [dark])
+  const theme = useMemo(() => createTheme({ 
+    palette: { 
+      mode: dark ? 'dark' : 'light',
+      primary: {
+        main: dark ? '#90caf9' : '#1976d2'
+      },
+      secondary: {
+        main: dark ? '#f48fb1' : '#dc004e'
+      }
+    } 
+  }), [dark])
   
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Navbar dark={dark} toggleDark={() => setDark(d => !d)} />
       <Routes>
-        <Route path="/" element={<Overview />} />
-        <Route path="/qc" element={<QC />} />
-        <Route path="/expression" element={<Expression />} />
-        <Route path="/de" element={<Differential />} />
-        <Route path="/pathways" element={<Pathways />} />
-        <Route path="/explorer" element={<Explorer />} />
+        <Route path="/" element={createPageWrapper(Overview, 'Overview')()} />
+        <Route path="/qc" element={createPageWrapper(QC, 'Quality Control')()} />
+        <Route path="/expression" element={createPageWrapper(Expression, 'Expression Analysis')()} />
+        <Route path="/de" element={createPageWrapper(Differential, 'Differential Expression')()} />
+        <Route path="/pathways" element={createPageWrapper(Pathways, 'Pathway Analysis')()} />
+        <Route path="/explorer" element={createPageWrapper(Explorer, 'Data Explorer')()} />
       </Routes>
       <footer style={{ padding: 16, textAlign: 'center', opacity: 0.7 }}>
         <Container>

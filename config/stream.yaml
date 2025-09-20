@@ -3,7 +3,7 @@ reference_fasta: data/reference/transcripts.fa
 discover:
   mode: "query"
   query_url: "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=tax_eq(9606)%20AND%20library_strategy=%22RNA-Seq%22%20AND%20instrument_platform=%22ILLUMINA%22%20AND%20library_layout=%22PAIRED%22%20AND%20(sample_title=*pancreas*%20OR%20tissue=%22pancreas%22)&fields=run_accession,study_accession,library_layout,fastq_ftp,first_public&format=tsv"
-  days: "30"
+  days: "1"
   condition_default: "unknown"
 
 
