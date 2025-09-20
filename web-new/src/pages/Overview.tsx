@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Grid, Typography } from '@mui/material'
-import StatCard from '../components/StatCard'
-import { Api } from '../api/client'
+import StatCard from '@/components/StatCard'
+import { Api } from '@/api/client'
 
 const Overview: React.FC = () => {
   const [runs, setRuns] = React.useState<any[]>([])
