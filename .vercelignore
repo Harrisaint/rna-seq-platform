@@ -1,0 +1,13 @@
+api/
+web/
+config/
+envs/
+workflows/
+*.yaml
+*.yml
+*.R
+*.Rmd
+Makefile
+Snakefile
+start_services.bat
+start_services.ps1
