@@ -1,0 +1,20 @@
+[project]
+name = "rna-seq-platform-api"
+version = "0.1.0"
+description = "FastAPI backend for RNA-seq platform"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pandas",
+  "pyarrow",
+  "pydantic>=2",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+
+

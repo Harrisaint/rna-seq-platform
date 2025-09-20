@@ -1,0 +1,70 @@
+---
+title: "RNA-seq Analysis Report"
+output: html_document
+params:
+  project_name: "project"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(jsonlite)
+library(ggplot2)
+library(readr)
+library(dplyr)
+```
+
+## Overview
+
+Project: `r params$project_name`  
+Date: `r Sys.Date()`
+
+### QC Summary
+
+If available, see MultiQC report in `results/qc/multiqc_report.html`.
+
+## PCA
+
+```{r}
+pca_path <- 'results/de/deseq_pca.tsv'
+if (file.exists(pca_path)) {
+  pca <- read_tsv(pca_path, show_col_types = FALSE)
+  ggplot(pca, aes(PC1, PC2, color=condition, label=sample)) +
+    geom_point(size=3) + theme_minimal() + geom_text(vjust=-1)
+} else {
+  cat('PCA results not found')
+}
+```
+
+## Volcano Plot
+
+If generated: `results/report_assets/volcano.png`
+
+## MA Plot
+
+If generated: `results/report_assets/ma.png`
+
+## Differential Expression Top Table
+
+```{r}
+res_path <- 'results/de/deseq_results.tsv'
+if (file.exists(res_path)) {
+  res <- read_tsv(res_path, show_col_types = FALSE)
+  head(res, 50)
+} else {
+  cat('DE results not found')
+}
+```
+
+## Provenance
+
+```{r}
+cfg_path <- 'config/config.yaml'
+if (file.exists(cfg_path)) {
+  cat('Active config at', cfg_path, '\n')
+}
+sessionInfo()
+```
+
+
+
+

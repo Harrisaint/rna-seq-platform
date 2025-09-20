@@ -1,0 +1,9 @@
+name: net
+channels: [conda-forge, bioconda, defaults]
+dependencies:
+  - wget
+  - curl
+
+
+
+

@@ -1,0 +1,9 @@
+project_name: prjna397172_demo
+reference_fasta: data/reference/transcripts.fa
+discover:
+  mode: "project"
+  tsv: "data/metadata/PRJNA397172.tsv"
+  condition_default: "unknown"   # override via config/design.tsv
+
+
+

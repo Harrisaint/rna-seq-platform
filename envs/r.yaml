@@ -1,0 +1,15 @@
+name: r
+channels: [bioconda, conda-forge, defaults]
+dependencies:
+  - r-base
+  - bioconductor-deseq2
+  - bioconductor-tximport
+  - r-optparse
+  - r-ggplot2
+  - r-pheatmap
+  - r-jsonlite
+  - r-rmarkdown
+
+
+
+
