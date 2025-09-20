@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd web-new && npm ci && npm run build",
-  "outputDirectory": "web-new/dist",
-  "installCommand": "cd web-new && npm ci",
+  "buildCommand": "npm ci && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
   "framework": "vite",
   "routes": [
     {
@@ -9,11 +9,6 @@
       "dest": "/index.html"
     }
   ],
-  "functions": {
-    "web-new/src/api/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "env": {
     "VITE_API_URL": "@vite_api_url"
   }
