@@ -1,0 +1,10 @@
+{
+  "scores": [
+    {"sample": "SRR5896247", "PC1": -1.2, "PC2": 0.8, "condition": "normal"},
+    {"sample": "SRR5896248", "PC1": 1.2, "PC2": -0.8, "condition": "tumor"}
+  ],
+  "variance": {
+    "PC1": 0.65,
+    "PC2": 0.35
+  }
+}

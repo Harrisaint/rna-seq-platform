@@ -8,12 +8,19 @@ export async function apiGet<T>(path: string): Promise<T> {
 }
 
 export const Api = {
-  runs: () => apiGet<{ sample: string; study?: string; condition?: string }[]>(`/runs`),
-  qc: () => apiGet<any>(`/qc/summary`),
-  de: (params?: URLSearchParams) => apiGet<any[]>(`/de${params ? `?${params}` : ''}`),
-  pca: () => apiGet<{ scores: any[]; variance: { PC1: number; PC2: number } }>(`/pca`),
-  heatmap: () => apiGet<{ rows: string[]; cols: string[]; values: any }>(`/heatmap`),
-  gene: (id: string) => apiGet<any>(`/gene/${encodeURIComponent(id)}`),
+  runs: (mode: 'demo' | 'live' = 'demo') => apiGet<{ sample: string; study?: string; condition?: string }[]>(`/runs?mode=${mode}`),
+  qc: (mode: 'demo' | 'live' = 'demo') => apiGet<any>(`/qc/summary?mode=${mode}`),
+  de: (params?: URLSearchParams, mode: 'demo' | 'live' = 'demo') => {
+    const url = new URL('/de', BASE)
+    if (params) {
+      params.forEach((value, key) => url.searchParams.set(key, value))
+    }
+    url.searchParams.set('mode', mode)
+    return apiGet<any[]>(url.pathname + url.search)
+  },
+  pca: (mode: 'demo' | 'live' = 'demo') => apiGet<{ scores: any[]; variance: { PC1: number; PC2: number } }>(`/pca?mode=${mode}`),
+  heatmap: (mode: 'demo' | 'live' = 'demo') => apiGet<{ rows: string[]; cols: string[]; values: any }>(`/heatmap?mode=${mode}`),
+  gene: (id: string, mode: 'demo' | 'live' = 'demo') => apiGet<any>(`/gene/${encodeURIComponent(id)}?mode=${mode}`),
   provenance: () => apiGet<any>(`/provenance`),
 }
 

@@ -16,9 +16,13 @@ def safe_path(*parts: str) -> Path:
     return p
 
 
-@lru_cache(maxsize=1)
-def load_samples() -> pd.DataFrame:
-    fp = safe_path("data", "metadata", "samples.csv")
+@lru_cache(maxsize=2)
+def load_samples(mode: str = "demo") -> pd.DataFrame:
+    if mode == "demo":
+        fp = safe_path("data", "metadata", "samples.csv")
+    else:  # live mode
+        fp = safe_path("data", "live", "samples.csv")
+    
     if fp.exists():
         return pd.read_csv(fp)
     return pd.DataFrame(columns=["sample", "R1", "R2", "condition", "study"])
@@ -31,29 +35,41 @@ def _read_json(path: Path) -> Optional[Dict[str, Any] | List[Dict[str, Any]]]:
         return json.load(fh)
 
 
-@lru_cache(maxsize=1)
-def load_multiqc() -> Optional[Dict[str, Any]]:
+@lru_cache(maxsize=2)
+def load_multiqc(mode: str = "demo") -> Optional[Dict[str, Any]]:
     # MultiQC writes multiqc_data.json in the same directory as report
-    p = safe_path("results", "qc", "multiqc_data.json")
+    if mode == "demo":
+        p = safe_path("results", "qc", "multiqc_data.json")
+    else:  # live mode
+        p = safe_path("results", "live", "qc", "multiqc_data.json")
     return _read_json(p)
 
 
-@lru_cache(maxsize=1)
-def load_de() -> List[Dict[str, Any]]:
-    p = safe_path("results", "de", "deseq_results.json")
+@lru_cache(maxsize=2)
+def load_de(mode: str = "demo") -> List[Dict[str, Any]]:
+    if mode == "demo":
+        p = safe_path("results", "de", "deseq_results.json")
+    else:  # live mode
+        p = safe_path("results", "live", "de", "deseq_results.json")
     data = _read_json(p)
     return data or []
 
 
-@lru_cache(maxsize=1)
-def load_pca() -> Dict[str, Any]:
-    p = safe_path("results", "de", "pca.json")
+@lru_cache(maxsize=2)
+def load_pca(mode: str = "demo") -> Dict[str, Any]:
+    if mode == "demo":
+        p = safe_path("results", "de", "pca.json")
+    else:  # live mode
+        p = safe_path("results", "live", "de", "pca.json")
     return _read_json(p) or {"scores": [], "variance": {"PC1": 0.0, "PC2": 0.0}}
 
 
-@lru_cache(maxsize=1)
-def load_heatmap() -> Dict[str, Any]:
-    p = safe_path("results", "de", "heatmap.json")
+@lru_cache(maxsize=2)
+def load_heatmap(mode: str = "demo") -> Dict[str, Any]:
+    if mode == "demo":
+        p = safe_path("results", "de", "heatmap.json")
+    else:  # live mode
+        p = safe_path("results", "live", "de", "heatmap.json")
     return _read_json(p) or {"rows": [], "cols": [], "values": []}
 
 

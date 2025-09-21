@@ -17,8 +17,7 @@ const Overview: React.FC<OverviewProps> = ({ mode, onModeChange, title }) => {
   
   React.useEffect(() => { 
     setLoading(true)
-    // TODO: Update API call based on mode (demo vs live)
-    Api.runs()
+    Api.runs(mode)
       .then(setRuns)
       .catch((err) => {
         console.error('API Error:', err)

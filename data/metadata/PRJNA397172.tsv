@@ -1,0 +1,3 @@
+run_accession	study_accession	library_layout	fastq_ftp	first_public
+SRR5896247	PRJNA397172	PAIRED	ftp.sra.ebi.ac.uk/vol1/fastq/SRR589/007/SRR5896247/SRR5896247.fastq.gz	2020-01-23
+SRR5896248	PRJNA397172	PAIRED	ftp.sra.ebi.ac.uk/vol1/fastq/SRR589/008/SRR5896248/SRR5896248.fastq.gz	2020-01-23

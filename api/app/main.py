@@ -24,14 +24,14 @@ app.add_middleware(
 
 
 @app.get("/runs", response_model=List[schemas.Run])
-def get_runs() -> List[schemas.Run]:
-    df = load_samples()
+def get_runs(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")) -> List[schemas.Run]:
+    df = load_samples(mode=mode)
     return [schemas.Run(sample=r.sample, study=getattr(r, 'study', None), condition=getattr(r, 'condition', None)) for r in df.itertuples(index=False)]
 
 
 @app.get("/qc/summary")
-def qc_summary():
-    return load_multiqc() or {}
+def qc_summary(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
+    return load_multiqc(mode=mode) or {}
 
 
 @app.get("/de", response_model=List[schemas.DEGene])
@@ -39,9 +39,10 @@ def get_de(
     min_abs_log2fc: float = Query(0.0),
     max_padj: float = Query(1.0),
     limit: int = Query(1000, le=10000),
-    sort: str = Query("padj")
+    sort: str = Query("padj"),
+    mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")
 ) -> List[schemas.DEGene]:
-    data = load_de()
+    data = load_de(mode=mode)
     # Filter
     filtered = [d for d in data if (d.get("padj") is None or d["padj"] <= max_padj) and (d.get("log2FC") is None or abs(d["log2FC"]) >= min_abs_log2fc)]
     # Sort
@@ -50,22 +51,22 @@ def get_de(
 
 
 @app.get("/gene/{gene_id}")
-def get_gene(gene_id: str):
+def get_gene(gene_id: str, mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
     # For demo: return DE row for the gene if present
-    data = load_de()
+    data = load_de(mode=mode)
     row = next((d for d in data if d.get("feature") == gene_id), None)
     return row or {}
 
 
 @app.get("/pca", response_model=schemas.PCAPayload)
-def get_pca():
-    payload = load_pca()
+def get_pca(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
+    payload = load_pca(mode=mode)
     return payload
 
 
 @app.get("/heatmap", response_model=schemas.HeatmapPayload)
-def get_heatmap():
-    return load_heatmap()
+def get_heatmap(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
+    return load_heatmap(mode=mode)
 
 
 @app.get("/provenance", response_model=schemas.Provenance)

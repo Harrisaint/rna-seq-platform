@@ -1,0 +1,52 @@
+[
+  {
+    "feature": "ENSG00000139618",
+    "baseMean": 1250.5,
+    "log2FC": 2.3,
+    "lfcSE": 0.45,
+    "stat": 5.11,
+    "pvalue": 3.2e-07,
+    "padj": 0.0012,
+    "gene_name": "BRCA1"
+  },
+  {
+    "feature": "ENSG00000012048",
+    "baseMean": 890.2,
+    "log2FC": -1.8,
+    "lfcSE": 0.38,
+    "stat": -4.74,
+    "pvalue": 2.1e-06,
+    "padj": 0.0045,
+    "gene_name": "BRCA2"
+  },
+  {
+    "feature": "ENSG00000141510",
+    "baseMean": 2100.8,
+    "log2FC": 1.5,
+    "lfcSE": 0.42,
+    "stat": 3.57,
+    "pvalue": 3.5e-04,
+    "padj": 0.0234,
+    "gene_name": "TP53"
+  },
+  {
+    "feature": "ENSG00000133703",
+    "baseMean": 1560.3,
+    "log2FC": -2.1,
+    "lfcSE": 0.51,
+    "stat": -4.12,
+    "pvalue": 3.8e-05,
+    "padj": 0.0156,
+    "gene_name": "KRAS"
+  },
+  {
+    "feature": "ENSG00000171862",
+    "baseMean": 980.7,
+    "log2FC": 1.9,
+    "lfcSE": 0.47,
+    "stat": 4.04,
+    "pvalue": 5.3e-05,
+    "padj": 0.0189,
+    "gene_name": "MYC"
+  }
+]

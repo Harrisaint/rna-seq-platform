@@ -17,8 +17,7 @@ const QC: React.FC<QCProps> = ({ mode, onModeChange, title }) => {
   React.useEffect(() => { 
     setLoading(true)
     setError(null)
-    // TODO: Update API call based on mode (demo vs live)
-    Api.qc()
+    Api.qc(mode)
       .then(setQc)
       .catch((err) => {
         setError(err.message)
