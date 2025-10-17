@@ -108,7 +108,7 @@ const QC: React.FC<QCProps> = ({ mode, onModeChange, title }) => {
       )}
 
       {mode === 'demo' && (
-        <Box sx={{ mt: 4, p: 2, bgcolor: 'primary.light', borderRadius: 1, opacity: 0.1 }}>
+        <Box sx={{ mt: 4, p: 2, bgcolor: 'primary.light', borderRadius: 1, opacity: 0.3 }}>
           <Typography variant="h6" gutterBottom>
             Demo QC Analysis
           </Typography>

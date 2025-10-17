@@ -67,7 +67,7 @@ const DataStatusIndicator: React.FC<DataStatusIndicatorProps> = ({
       p: 2, 
       borderRadius: 1, 
       bgcolor: mode === 'demo' ? 'primary.light' : 'secondary.light',
-      opacity: 0.1,
+      opacity: 0.3,
       border: 1,
       borderColor: mode === 'demo' ? 'primary.main' : 'secondary.main'
     }}>

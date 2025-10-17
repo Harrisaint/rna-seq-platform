@@ -13,7 +13,7 @@ This guide covers deploying the RNA-seq Platform to Render (backend) and Vercel 
 ### Option 1: Using Render Dashboard (Recommended)
 
 1. **Connect your GitHub repository to Render:**
-   - Go to [render.com](https://render.com) and sign in
+   - Go to [render.com](arehttps://render.com) and sign in
    - Click "New +" → "Web Service"
    - Connect your GitHub repository
 
