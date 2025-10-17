@@ -26,13 +26,13 @@ async def startup_event():
 import os
 
 # Get allowed origins from environment variable or default to localhost and common frontend domains
-DEFAULT_ORIGINS = "http://localhost:5173,https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app"
+DEFAULT_ORIGINS = "http://localhost:5173,https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app,https://*.vercel.app"
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
 print(f"ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],  # Allow all origins for now
     allow_methods=["*"],
     allow_headers=["*"],
 )
