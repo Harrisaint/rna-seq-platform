@@ -25,6 +25,8 @@ RNA-Seq analysis platform with web interface, API backend, and automated pipelin
 - [x] Added live discovery mode with ENA API integration
 - [x] Created LiveDiscoveryStatus component with trigger button
 - [x] Fixed ENA API 500 errors - now working but finding 0 pancreas samples
+- [x] Added DEG table with up/down regulation display
+- [x] Fixed Differential and Expression pages to use mode context (Demo/Live toggle)
 
 ## Current Focus
 - **ENA Search Debugging**: ENA API is working but finding 0 pancreas samples - need to debug search criteria
