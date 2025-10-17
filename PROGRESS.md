@@ -1,7 +1,7 @@
 # RNA-Seq Platform Development Progress
 
 ## Current Status
-**Last Updated:** 2025-10-17 13:46
+**Last Updated:** 2025-10-17 13:51
 **Current Phase:** Initial Setup & Analysis
 
 ## Project Overview
@@ -15,6 +15,7 @@ RNA-Seq analysis platform with web interface, API backend, and automated pipelin
 - [x] Updated Demo Dataset background to use exact hex color #90caf9 to match Overview title blue perfectly
 - [x] Made Demo Dataset background brighter with #64b5f6 for better text visibility
 - [x] Changed Demo Dataset background to #90ccfc as requested
+- [x] Removed opacity: 0.3 from DataStatusIndicator to fix dimmed Demo Dataset window
 
 ## Current Focus
 - Setting up comprehensive progress tracking for context preservation between chat sessions
