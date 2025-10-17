@@ -34,9 +34,13 @@ const DEGTable: React.FC<DEGTableProps> = ({ data, padjThreshold, lfcThreshold }
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(25)
 
-  // Filter data based on thresholds
+  // Filter data based on thresholds with null checks
   const filteredData = data.filter(d => 
-    d.padj <= padjThreshold && Math.abs(d.log2FC) >= lfcThreshold
+    d && 
+    typeof d.padj === 'number' && 
+    typeof d.log2FC === 'number' &&
+    d.padj <= padjThreshold && 
+    Math.abs(d.log2FC) >= lfcThreshold
   )
 
   // Sort by significance (lowest padj first)
@@ -111,31 +115,31 @@ const DEGTable: React.FC<DEGTableProps> = ({ data, padjThreshold, lfcThreshold }
                     {row.gene_name || 'N/A'}
                   </TableCell>
                   <TableCell align="right">
-                    {row.baseMean.toFixed(2)}
+                    {row.baseMean ? row.baseMean.toFixed(2) : 'N/A'}
                   </TableCell>
                   <TableCell align="right">
                     <Box sx={{ 
-                      color: row.log2FC > 0 ? 'error.main' : 'primary.main',
+                      color: (row.log2FC || 0) > 0 ? 'error.main' : 'primary.main',
                       fontWeight: 'bold'
                     }}>
-                      {row.log2FC.toFixed(3)}
+                      {row.log2FC ? row.log2FC.toFixed(3) : 'N/A'}
                     </Box>
                   </TableCell>
                   <TableCell align="center">
-                    {getRegulationChip(row.log2FC)}
+                    {getRegulationChip(row.log2FC || 0)}
                   </TableCell>
                   <TableCell align="right">
-                    {row.pvalue.toExponential(2)}
+                    {row.pvalue ? row.pvalue.toExponential(2) : 'N/A'}
                   </TableCell>
                   <TableCell align="right">
                     <Chip 
-                      label={row.padj.toExponential(2)} 
-                      color={getSignificanceColor(row.padj)}
+                      label={row.padj ? row.padj.toExponential(2) : 'N/A'} 
+                      color={getSignificanceColor(row.padj || 1)}
                       size="small"
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {row.stat.toFixed(3)}
+                    {row.stat ? row.stat.toFixed(3) : 'N/A'}
                   </TableCell>
                 </TableRow>
               ))}

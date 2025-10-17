@@ -31,6 +31,8 @@ const Differential: React.FC<DifferentialProps> = ({ mode, onModeChange, title }
           mode: mode
         })
         const data = await Api.de(p, mode)
+        console.log('Differential expression data:', data)
+        console.log('Data length:', data?.length)
         setDe(data)
       } catch (err) {
         setError('Failed to load differential expression data')
