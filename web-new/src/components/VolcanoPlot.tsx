@@ -19,11 +19,62 @@ const VolcanoPlot: React.FC<Props> = ({ data }) => {
     import('plotly.js-dist-min')
       .then((Plot) => {
         const Lib: any = (Plot as any).default ?? Plot
-        Lib.newPlot(el, [{ x, y, mode: 'markers', type: 'scatter' }], { 
-          title: 'Volcano', 
-          xaxis: { title: 'log2FC' }, 
-          yaxis: { title: '-log10(padj)' },
-          margin: { t: 50, b: 50, l: 50, r: 50 }
+        
+        // Create traces with different colors based on significance
+        const traces = []
+        
+        // Significant up-regulated (red)
+        const upSig = data.filter(d => d.log2FC > 0 && d.padj < 0.05)
+        if (upSig.length > 0) {
+          traces.push({
+            x: upSig.map(d => d.log2FC),
+            y: upSig.map(d => -Math.log10(d.padj)),
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Up-regulated',
+            marker: { color: 'red', size: 8 }
+          })
+        }
+        
+        // Significant down-regulated (blue)
+        const downSig = data.filter(d => d.log2FC < 0 && d.padj < 0.05)
+        if (downSig.length > 0) {
+          traces.push({
+            x: downSig.map(d => d.log2FC),
+            y: downSig.map(d => -Math.log10(d.padj)),
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Down-regulated',
+            marker: { color: 'blue', size: 8 }
+          })
+        }
+        
+        // Non-significant (gray)
+        const nonSig = data.filter(d => d.padj >= 0.05)
+        if (nonSig.length > 0) {
+          traces.push({
+            x: nonSig.map(d => d.log2FC),
+            y: nonSig.map(d => -Math.log10(Math.max(d.padj, 1e-10))),
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Non-significant',
+            marker: { color: 'gray', size: 6, opacity: 0.6 }
+          })
+        }
+        
+        // Add significance lines
+        const shapes = [
+          { type: 'line', x0: 0, x1: 0, y0: 0, y1: Math.max(...y), line: { color: 'black', dash: 'dash' } },
+          { type: 'line', x0: -2, x1: 2, y0: -Math.log10(0.05), y1: -Math.log10(0.05), line: { color: 'black', dash: 'dash' } }
+        ]
+        
+        Lib.newPlot(el, traces, { 
+          title: 'Volcano Plot - Differential Expression', 
+          xaxis: { title: 'log2 Fold Change' }, 
+          yaxis: { title: '-log10(Adjusted P-value)' },
+          margin: { t: 50, b: 50, l: 50, r: 50 },
+          shapes: shapes,
+          showlegend: true
         })
       })
       .catch((err) => {

@@ -94,8 +94,9 @@ def create_demo_results():
     de_dir = results_dir / "de"
     de_dir.mkdir(exist_ok=True)
     
-    # Sample differential expression results
+    # Sample differential expression results - more comprehensive dataset
     de_results = [
+        # Highly significant up-regulated genes
         {
             "feature": "ENSG00000000003",
             "baseMean": 1000.5,
@@ -107,6 +108,27 @@ def create_demo_results():
             "gene_name": "TSPAN6"
         },
         {
+            "feature": "ENSG00000000419",
+            "baseMean": 2000.1,
+            "log2FC": 1.8,
+            "lfcSE": 0.2,
+            "stat": 9.0,
+            "pvalue": 1e-12,
+            "padj": 1e-10,
+            "gene_name": "DPM1"
+        },
+        {
+            "feature": "ENSG00000000457",
+            "baseMean": 1500.3,
+            "log2FC": 1.5,
+            "lfcSE": 0.25,
+            "stat": 6.0,
+            "pvalue": 1e-8,
+            "padj": 1e-6,
+            "gene_name": "SCYL3"
+        },
+        # Highly significant down-regulated genes
+        {
             "feature": "ENSG00000000005",
             "baseMean": 500.2,
             "log2FC": -1.8,
@@ -117,14 +139,86 @@ def create_demo_results():
             "gene_name": "TNMD"
         },
         {
-            "feature": "ENSG00000000419",
-            "baseMean": 2000.1,
-            "log2FC": 0.5,
-            "lfcSE": 0.2,
-            "stat": 2.5,
-            "pvalue": 0.01,
-            "padj": 0.05,
-            "gene_name": "DPM1"
+            "feature": "ENSG00000000460",
+            "baseMean": 800.7,
+            "log2FC": -2.2,
+            "lfcSE": 0.35,
+            "stat": -6.3,
+            "pvalue": 1e-9,
+            "padj": 1e-7,
+            "gene_name": "C1ORF112"
+        },
+        {
+            "feature": "ENSG00000000938",
+            "baseMean": 1200.4,
+            "log2FC": -1.6,
+            "lfcSE": 0.3,
+            "stat": -5.3,
+            "pvalue": 1e-7,
+            "padj": 1e-5,
+            "gene_name": "FGR"
+        },
+        # Moderately significant genes
+        {
+            "feature": "ENSG00000000971",
+            "baseMean": 600.8,
+            "log2FC": 1.2,
+            "lfcSE": 0.4,
+            "stat": 3.0,
+            "pvalue": 0.002,
+            "padj": 0.02,
+            "gene_name": "CFH"
+        },
+        {
+            "feature": "ENSG00000001036",
+            "baseMean": 900.2,
+            "log2FC": -1.1,
+            "lfcSE": 0.35,
+            "stat": -3.1,
+            "pvalue": 0.001,
+            "padj": 0.015,
+            "gene_name": "FUCA2"
+        },
+        # Non-significant genes (for better plot visualization)
+        {
+            "feature": "ENSG00000001084",
+            "baseMean": 400.5,
+            "log2FC": 0.3,
+            "lfcSE": 0.4,
+            "stat": 0.75,
+            "pvalue": 0.45,
+            "padj": 0.8,
+            "gene_name": "GCLC"
+        },
+        {
+            "feature": "ENSG00000001167",
+            "baseMean": 750.3,
+            "log2FC": -0.4,
+            "lfcSE": 0.3,
+            "stat": -1.33,
+            "pvalue": 0.18,
+            "padj": 0.6,
+            "gene_name": "NFYA"
+        },
+        {
+            "feature": "ENSG00000001461",
+            "baseMean": 1100.7,
+            "log2FC": 0.2,
+            "lfcSE": 0.25,
+            "stat": 0.8,
+            "pvalue": 0.42,
+            "padj": 0.75,
+            "gene_name": "STPG1"
+        },
+        {
+            "feature": "ENSG00000001497",
+            "baseMean": 650.9,
+            "log2FC": -0.6,
+            "lfcSE": 0.35,
+            "stat": -1.71,
+            "pvalue": 0.09,
+            "padj": 0.4,
+            "gene_name": "NIPAL3"
         }
     ]
     
