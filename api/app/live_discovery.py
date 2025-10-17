@@ -24,14 +24,14 @@ class LiveDiscoveryService:
         self.last_discovery = None
         self.discovered_samples = []
         
-    def search_ena_pancreas_data(self, days_back: int = 7) -> List[Dict[str, Any]]:
-        """Search ENA for recent pancreas RNA-seq data"""
+    def search_ena_cancer_data(self, days_back: int = 30, organ_filter: str = None) -> List[Dict[str, Any]]:
+        """Search ENA for recent cancer RNA-seq data, optionally filtered by organ"""
         try:
             # Calculate date range
             end_date = datetime.now()
             start_date = end_date - timedelta(days=days_back)
             
-            # Simplified ENA search query - more likely to work
+            # Cancer-focused ENA search query
             query = f'tax_eq(9606) AND library_strategy="RNA-Seq" AND first_public>={start_date.strftime("%Y-%m-%d")}'
             
             # ENA search parameters
@@ -40,10 +40,10 @@ class LiveDiscoveryService:
                 'query': query,
                 'fields': 'run_accession,study_accession,library_layout,fastq_ftp,first_public,sample_title,study_title',
                 'format': 'json',
-                'limit': 50  # Reduced limit to avoid timeouts
+                'limit': 100  # Increased limit for cancer data
             }
             
-            print(f"Searching ENA with query: {query}")
+            print(f"Searching ENA for cancer RNA-seq with query: {query}")
             response = requests.get(self.ena_base_url, params=params, timeout=30)
             response.raise_for_status()
             
@@ -60,8 +60,8 @@ class LiveDiscoveryService:
             
             print(f"ENA returned {len(runs)} total samples")
             
-            # Filter for pancreas-related samples
-            pancreas_samples = []
+            # Filter for cancer-related samples
+            cancer_samples = []
             for run in runs:
                 # Handle both dict and list formats
                 if isinstance(run, dict):
@@ -76,13 +76,21 @@ class LiveDiscoveryService:
                     # Skip if not a dict
                     continue
                 
-                # Look for pancreas-related keywords
-                if any(keyword in sample_title or keyword in study_title 
-                       for keyword in ['pancreas', 'pancreatic', 'islet', 'beta cell']):
+                # Look for cancer-related keywords
+                cancer_keywords = ['cancer', 'tumor', 'carcinoma', 'adenocarcinoma', 'sarcoma', 'lymphoma', 'leukemia', 'malignant', 'neoplasm']
+                if any(keyword in sample_title or keyword in study_title for keyword in cancer_keywords):
+                    # Determine organ/tissue type
+                    organ = self._infer_organ(sample_title, study_title)
+                    
+                    # Apply organ filter if specified
+                    if organ_filter and organ_filter.lower() not in organ.lower():
+                        continue
+                    
                     processed_run = {
                         'sample': run_accession,
                         'study': study_accession,
                         'condition': self._infer_condition(sample_title),
+                        'organ': organ,
                         'library_layout': library_layout,
                         'fastq_ftp': fastq_ftp,
                         'first_public': first_public,
@@ -90,10 +98,12 @@ class LiveDiscoveryService:
                         'study_title': study_title,
                         'discovered_at': datetime.now().isoformat()
                     }
-                    pancreas_samples.append(processed_run)
+                    cancer_samples.append(processed_run)
             
-            print(f"Found {len(pancreas_samples)} pancreas-related samples from ENA")
-            return pancreas_samples
+            print(f"Found {len(cancer_samples)} cancer-related samples from ENA")
+            if organ_filter:
+                print(f"Filtered by organ: {organ_filter}")
+            return cancer_samples
             
         except requests.exceptions.RequestException as e:
             print(f"Network error searching ENA: {e}")
@@ -114,6 +124,41 @@ class LiveDiscoveryService:
             return 'disease'
         else:
             return 'unknown'
+    
+    def _infer_organ(self, sample_title: str, study_title: str) -> str:
+        """Infer organ/tissue type from sample and study titles"""
+        text = f"{sample_title} {study_title}".lower()
+        
+        # Organ-specific keywords
+        organ_keywords = {
+            'lung': ['lung', 'pulmonary', 'bronchial', 'alveolar'],
+            'breast': ['breast', 'mammary', 'ductal'],
+            'liver': ['liver', 'hepatic', 'hepatocellular'],
+            'pancreas': ['pancreas', 'pancreatic', 'islet', 'beta cell'],
+            'brain': ['brain', 'cerebral', 'neural', 'glioblastoma', 'glioma'],
+            'colon': ['colon', 'colorectal', 'rectal', 'intestinal'],
+            'prostate': ['prostate', 'prostatic'],
+            'ovary': ['ovary', 'ovarian'],
+            'kidney': ['kidney', 'renal', 'nephron'],
+            'stomach': ['stomach', 'gastric', 'gastrointestinal'],
+            'skin': ['skin', 'melanoma', 'cutaneous'],
+            'blood': ['blood', 'leukemia', 'lymphoma', 'hematopoietic'],
+            'bone': ['bone', 'osteosarcoma', 'skeletal'],
+            'thyroid': ['thyroid', 'thyroidal'],
+            'bladder': ['bladder', 'urinary'],
+            'cervix': ['cervix', 'cervical'],
+            'endometrium': ['endometrium', 'endometrial'],
+            'esophagus': ['esophagus', 'esophageal'],
+            'head_neck': ['head', 'neck', 'oral', 'pharyngeal', 'laryngeal'],
+            'sarcoma': ['sarcoma', 'soft tissue']
+        }
+        
+        # Find matching organ
+        for organ, keywords in organ_keywords.items():
+            if any(keyword in text for keyword in keywords):
+                return organ
+        
+        return 'unknown'
     
     def save_discovered_samples(self, samples: List[Dict[str, Any]]):
         """Save discovered samples to live data directory"""
@@ -301,8 +346,8 @@ class LiveDiscoveryService:
             try:
                 print("Starting live discovery cycle...")
                 
-                # Search for new data
-                new_samples = self.search_ena_pancreas_data(days_back=7)
+                # Search for new cancer data
+                new_samples = self.search_ena_cancer_data(days_back=30)
                 
                 if new_samples:
                     # Save new samples

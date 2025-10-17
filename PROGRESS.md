@@ -20,9 +20,16 @@ RNA-Seq analysis platform with web interface, API backend, and automated pipelin
 - [x] Updated API client to use Render backend URL https://rna-seq-platform-api.onrender.com instead of localhost
 - [x] Fixed hardcoded port 8000 error message and built updated frontend with Render API URL
 - [x] Successfully deployed backend with automatic data initialization - platform now has real PRJNA397172 data!
+- [x] Fixed Expression page blank screen issue - Plotly rendering errors resolved
+- [x] Implemented GSEA (Gene Set Enrichment Analysis) with pathway enrichment table
+- [x] Added live discovery mode with ENA API integration
+- [x] Created LiveDiscoveryStatus component with trigger button
+- [x] Fixed ENA API 500 errors - now working but finding 0 pancreas samples
 
 ## Current Focus
-- Frontend redeployed but still showing API error - investigating CORS or domain issues
+- **ENA Search Debugging**: ENA API is working but finding 0 pancreas samples - need to debug search criteria
+- **Live Discovery Testing**: Ensure live mode works end-to-end with real data discovery
+- **Platform Completion**: Final testing and polish of all features
 ## Key Files & Components
 
 ### Frontend (web-new/)

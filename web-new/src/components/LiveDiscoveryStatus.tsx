@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, Chip, Button, Alert } from '@mui/material'
+import { Box, Typography, Chip, Button, Alert, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { Api } from './apiClient'
 
 interface LiveDiscoveryStatusProps {
@@ -10,10 +10,13 @@ const LiveDiscoveryStatus: React.FC<LiveDiscoveryStatusProps> = ({ mode }) => {
   const [status, setStatus] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(false)
   const [triggering, setTriggering] = React.useState(false)
+  const [organs, setOrgans] = React.useState<any>({})
+  const [selectedOrgan, setSelectedOrgan] = React.useState<string>('')
 
   React.useEffect(() => {
     if (mode === 'live') {
       fetchStatus()
+      fetchOrgans()
     }
   }, [mode])
 
@@ -30,16 +33,33 @@ const LiveDiscoveryStatus: React.FC<LiveDiscoveryStatusProps> = ({ mode }) => {
     }
   }
 
+  const fetchOrgans = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/discovery/organs`)
+      const data = await response.json()
+      setOrgans(data.organs || {})
+    } catch (error) {
+      console.error('Failed to fetch organs:', error)
+    }
+  }
+
   const triggerDiscovery = async () => {
     try {
       setTriggering(true)
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/discovery/trigger`, {
+      const url = selectedOrgan 
+        ? `${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/discovery/trigger?organ=${encodeURIComponent(selectedOrgan)}`
+        : `${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/discovery/trigger`
+      
+      const response = await fetch(url, {
         method: 'POST'
       })
       const data = await response.json()
       console.log('Discovery triggered:', data)
-      // Refresh status after triggering
-      setTimeout(fetchStatus, 2000)
+      // Refresh status and organs after triggering
+      setTimeout(() => {
+        fetchStatus()
+        fetchOrgans()
+      }, 2000)
     } catch (error) {
       console.error('Failed to trigger discovery:', error)
     } finally {
@@ -73,14 +93,31 @@ const LiveDiscoveryStatus: React.FC<LiveDiscoveryStatusProps> = ({ mode }) => {
         <Typography variant="h6">
           Live Discovery Status
         </Typography>
-        <Button 
-          variant="outlined" 
-          size="small" 
-          onClick={triggerDiscovery}
-          disabled={triggering}
-        >
-          {triggering ? 'Discovering...' : 'Trigger Discovery'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Filter by Organ</InputLabel>
+            <Select
+              value={selectedOrgan}
+              label="Filter by Organ"
+              onChange={(e) => setSelectedOrgan(e.target.value)}
+            >
+              <MenuItem value="">All Organs</MenuItem>
+              {Object.entries(organs).map(([organ, count]) => (
+                <MenuItem key={organ} value={organ}>
+                  {organ} ({count})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button 
+            variant="outlined" 
+            size="small" 
+            onClick={triggerDiscovery}
+            disabled={triggering}
+          >
+            {triggering ? 'Discovering...' : 'Trigger Discovery'}
+          </Button>
+        </Box>
       </Box>
       
       <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>

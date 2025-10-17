@@ -122,14 +122,36 @@ def get_discovery_status():
 
 
 @app.post("/discovery/trigger")
-def trigger_discovery():
-    """Manually trigger a discovery cycle"""
+def trigger_discovery(organ: str = None):
+    """Manually trigger a discovery cycle with optional organ filter"""
     try:
-        new_samples = discovery_service.search_ena_pancreas_data(days_back=7)
+        new_samples = discovery_service.search_ena_cancer_data(days_back=30, organ_filter=organ)
         if new_samples:
             discovery_service.save_discovered_samples(new_samples)
             discovery_service.generate_live_analysis_data()
-        return {"message": f"Discovery triggered. Found {len(new_samples)} new samples."}
+        return {"message": f"Discovery triggered. Found {len(new_samples)} new samples.", "organ_filter": organ}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/discovery/organs")
+def get_available_organs():
+    """Get list of available organ types from discovered samples"""
+    try:
+        live_dir = safe_path("data", "live")
+        samples_file = live_dir / "samples.csv"
+        
+        if not samples_file.exists():
+            return {"organs": []}
+        
+        import pandas as pd
+        df = pd.read_csv(samples_file)
+        
+        if 'organ' in df.columns:
+            organs = df['organ'].value_counts().to_dict()
+            return {"organs": organs}
+        else:
+            return {"organs": []}
     except Exception as e:
         return {"error": str(e)}
 
