@@ -225,6 +225,9 @@ def create_demo_results():
     with open(de_dir / "deseq_results.json", 'w') as f:
         json.dump(de_results, f, indent=2)
     
+    print(f"Created differential expression results with {len(de_results)} genes")
+    print("Gene names included:", [gene['gene_name'] for gene in de_results[:5]])
+    
     # Create PCA results
     pca_data = {
         "scores": [

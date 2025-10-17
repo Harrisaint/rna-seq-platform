@@ -33,6 +33,10 @@ const Differential: React.FC<DifferentialProps> = ({ mode, onModeChange, title }
         const data = await Api.de(p, mode)
         console.log('Differential expression data:', data)
         console.log('Data length:', data?.length)
+        if (data && data.length > 0) {
+          console.log('First gene data:', data[0])
+          console.log('Gene names in data:', data.map(d => d.gene_name).slice(0, 5))
+        }
         setDe(data)
       } catch (err) {
         setError('Failed to load differential expression data')
@@ -60,14 +64,18 @@ const Differential: React.FC<DifferentialProps> = ({ mode, onModeChange, title }
           </Box>
         )}
         
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} lg={6}>
             <Typography variant="h6" gutterBottom>Volcano Plot</Typography>
-            <VolcanoPlot data={de} />
+            <Box sx={{ width: '100%', height: 500 }}>
+              <VolcanoPlot data={de} />
+            </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} lg={6}>
             <Typography variant="h6" gutterBottom>MA Plot</Typography>
-            <MAPlot data={de} />
+            <Box sx={{ width: '100%', height: 500 }}>
+              <MAPlot data={de} />
+            </Box>
           </Grid>
           
           <Grid item xs={12}>

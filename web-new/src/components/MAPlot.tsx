@@ -69,11 +69,26 @@ const MAPlot: React.FC<Props> = ({ data }) => {
         
         Lib.newPlot(el, traces, { 
           title: 'MA Plot - Mean vs Log2 Fold Change', 
-          xaxis: { title: 'log10(Base Mean + 1)' }, 
-          yaxis: { title: 'log2 Fold Change' },
-          margin: { t: 50, b: 50, l: 50, r: 50 },
+          xaxis: { 
+            title: 'log10(Base Mean + 1)',
+            titlefont: { size: 14 },
+            tickfont: { size: 12 }
+          }, 
+          yaxis: { 
+            title: 'log2 Fold Change',
+            titlefont: { size: 14 },
+            tickfont: { size: 12 }
+          },
+          margin: { t: 60, b: 80, l: 80, r: 60 },
           shapes: shapes,
-          showlegend: true
+          showlegend: true,
+          legend: { 
+            x: 0.02, 
+            y: 0.98,
+            font: { size: 12 }
+          },
+          width: el.offsetWidth,
+          height: 500
         })
       })
       .catch((err) => {

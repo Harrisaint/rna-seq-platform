@@ -70,11 +70,26 @@ const VolcanoPlot: React.FC<Props> = ({ data }) => {
         
         Lib.newPlot(el, traces, { 
           title: 'Volcano Plot - Differential Expression', 
-          xaxis: { title: 'log2 Fold Change' }, 
-          yaxis: { title: '-log10(Adjusted P-value)' },
-          margin: { t: 50, b: 50, l: 50, r: 50 },
+          xaxis: { 
+            title: 'log2 Fold Change',
+            titlefont: { size: 14 },
+            tickfont: { size: 12 }
+          }, 
+          yaxis: { 
+            title: '-log10(Adjusted P-value)',
+            titlefont: { size: 14 },
+            tickfont: { size: 12 }
+          },
+          margin: { t: 60, b: 80, l: 80, r: 60 },
           shapes: shapes,
-          showlegend: true
+          showlegend: true,
+          legend: { 
+            x: 0.02, 
+            y: 0.98,
+            font: { size: 12 }
+          },
+          width: el.offsetWidth,
+          height: 500
         })
       })
       .catch((err) => {
