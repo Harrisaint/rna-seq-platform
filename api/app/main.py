@@ -26,7 +26,7 @@ async def startup_event():
 import os
 
 # Get allowed origins from environment variable or default to localhost and common frontend domains
-DEFAULT_ORIGINS = "http://localhost:5173,https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app,https://*.vercel.app"
+DEFAULT_ORIGINS = "http://localhost:5173,https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app,https://rna-seq-platform-oekb6bc93-harrisaints-projects.vercel.app,https://*.vercel.app"
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
 print(f"ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
 
