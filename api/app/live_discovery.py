@@ -2,8 +2,8 @@
 Live Discovery Service for RNA-seq Platform
 Continuously discovers new pancreas RNA-seq data from ENA
 
-Note: Currently using mock data for demo purposes to avoid ENA API issues.
-To enable real ENA discovery, replace the mock data generation with actual ENA API calls.
+Searches the European Nucleotide Archive (ENA) for recent human RNA-seq data
+and filters for pancreas-related samples based on sample/study titles.
 """
 import os
 import json
@@ -27,67 +27,61 @@ class LiveDiscoveryService:
     def search_ena_pancreas_data(self, days_back: int = 7) -> List[Dict[str, Any]]:
         """Search ENA for recent pancreas RNA-seq data"""
         try:
-            # For now, let's create mock data instead of hitting the real ENA API
-            # This avoids the 500 error and provides a working demo
-            print("Generating mock pancreas RNA-seq data for demo purposes...")
+            # Calculate date range
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days_back)
             
-            # Generate some realistic mock samples
-            mock_samples = []
-            base_date = datetime.now() - timedelta(days=days_back)
+            # Simplified ENA search query - more likely to work
+            query = f'tax_eq(9606) AND library_strategy="RNA-Seq" AND first_public>={start_date.strftime("%Y-%m-%d")}'
             
-            # Create 3-5 mock samples with realistic data
-            sample_templates = [
-                {
-                    'sample': 'SRR1234567',
-                    'study': 'PRJNA123456',
-                    'condition': 'tumor',
-                    'sample_title': 'Pancreatic adenocarcinoma sample 1',
-                    'study_title': 'Pancreatic cancer RNA-seq study'
-                },
-                {
-                    'sample': 'SRR1234568', 
-                    'study': 'PRJNA123456',
-                    'condition': 'normal',
-                    'sample_title': 'Normal pancreas tissue sample 1',
-                    'study_title': 'Pancreatic cancer RNA-seq study'
-                },
-                {
-                    'sample': 'SRR1234569',
-                    'study': 'PRJNA123457', 
-                    'condition': 'tumor',
-                    'sample_title': 'Pancreatic ductal adenocarcinoma',
-                    'study_title': 'Pancreatic cancer biomarker discovery'
-                },
-                {
-                    'sample': 'SRR1234570',
-                    'study': 'PRJNA123458',
-                    'condition': 'disease',
-                    'sample_title': 'Chronic pancreatitis sample',
-                    'study_title': 'Pancreatic disease progression study'
-                }
-            ]
+            # ENA search parameters
+            params = {
+                'result': 'read_run',
+                'query': query,
+                'fields': 'run_accession,study_accession,library_layout,fastq_ftp,first_public,sample_title,study_title',
+                'format': 'json',
+                'limit': 50  # Reduced limit to avoid timeouts
+            }
             
-            for i, template in enumerate(sample_templates):
-                # Add some randomness to make it look like real discovery
-                if i < 2:  # Only include first 2 samples to keep it manageable
+            print(f"Searching ENA with query: {query}")
+            response = requests.get(self.ena_base_url, params=params, timeout=30)
+            response.raise_for_status()
+            
+            data = response.json()
+            runs = data.get('results', [])
+            
+            print(f"ENA returned {len(runs)} total samples")
+            
+            # Filter for pancreas-related samples
+            pancreas_samples = []
+            for run in runs:
+                sample_title = run.get('sample_title', '').lower()
+                study_title = run.get('study_title', '').lower()
+                
+                # Look for pancreas-related keywords
+                if any(keyword in sample_title or keyword in study_title 
+                       for keyword in ['pancreas', 'pancreatic', 'islet', 'beta cell']):
                     processed_run = {
-                        'sample': template['sample'],
-                        'study': template['study'],
-                        'condition': template['condition'],
-                        'library_layout': 'PAIRED',
-                        'fastq_ftp': f'ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR123/007/{template["sample"]}/{template["sample"]}.fastq.gz',
-                        'first_public': (base_date + timedelta(days=i)).strftime('%Y-%m-%d'),
-                        'sample_title': template['sample_title'],
-                        'study_title': template['study_title'],
+                        'sample': run.get('run_accession', ''),
+                        'study': run.get('study_accession', ''),
+                        'condition': self._infer_condition(run.get('sample_title', '')),
+                        'library_layout': run.get('library_layout', ''),
+                        'fastq_ftp': run.get('fastq_ftp', ''),
+                        'first_public': run.get('first_public', ''),
+                        'sample_title': run.get('sample_title', ''),
+                        'study_title': run.get('study_title', ''),
                         'discovered_at': datetime.now().isoformat()
                     }
-                    mock_samples.append(processed_run)
+                    pancreas_samples.append(processed_run)
             
-            print(f"Generated {len(mock_samples)} mock pancreas RNA-seq samples")
-            return mock_samples
+            print(f"Found {len(pancreas_samples)} pancreas-related samples from ENA")
+            return pancreas_samples
             
+        except requests.exceptions.RequestException as e:
+            print(f"Network error searching ENA: {e}")
+            return []
         except Exception as e:
-            print(f"Error generating mock data: {e}")
+            print(f"Error searching ENA: {e}")
             return []
     
     def _infer_condition(self, sample_title: str) -> str:
