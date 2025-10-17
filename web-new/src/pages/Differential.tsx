@@ -1,8 +1,9 @@
 import React from 'react'
-import { Container, Grid, Slider, Typography } from '@mui/material'
+import { Container, Grid, Slider, Typography, Box } from '@mui/material'
 import { Api } from '../components/apiClient'
 import VolcanoPlot from '../components/VolcanoPlot'
 import MAPlot from '../components/MAPlot'
+import DEGTable from '../components/DEGTable'
 
 const Differential: React.FC = () => {
   const [padj, setPadj] = React.useState(0.1)
@@ -22,6 +23,15 @@ const Differential: React.FC = () => {
           <Slider min={0} max={1} step={0.01} value={padj} onChange={(_, v) => setPadj(v as number)} />
           <Typography gutterBottom>|log2FC| ≥ {lfc}</Typography>
           <Slider min={0} max={4} step={0.1} value={lfc} onChange={(_, v) => setLfc(v as number)} />
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ mt: 3 }}>
+            <DEGTable 
+              data={de} 
+              padjThreshold={padj} 
+              lfcThreshold={lfc} 
+            />
+          </Box>
         </Grid>
       </Grid>
     </Container>
