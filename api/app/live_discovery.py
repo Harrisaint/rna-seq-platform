@@ -48,28 +48,46 @@ class LiveDiscoveryService:
             response.raise_for_status()
             
             data = response.json()
-            runs = data.get('results', [])
+            
+            # Handle different ENA response formats
+            if isinstance(data, list):
+                runs = data
+            elif isinstance(data, dict) and 'results' in data:
+                runs = data['results']
+            else:
+                print(f"Unexpected ENA response format: {type(data)}")
+                runs = []
             
             print(f"ENA returned {len(runs)} total samples")
             
             # Filter for pancreas-related samples
             pancreas_samples = []
             for run in runs:
-                sample_title = run.get('sample_title', '').lower()
-                study_title = run.get('study_title', '').lower()
+                # Handle both dict and list formats
+                if isinstance(run, dict):
+                    sample_title = run.get('sample_title', '').lower()
+                    study_title = run.get('study_title', '').lower()
+                    run_accession = run.get('run_accession', '')
+                    study_accession = run.get('study_accession', '')
+                    library_layout = run.get('library_layout', '')
+                    fastq_ftp = run.get('fastq_ftp', '')
+                    first_public = run.get('first_public', '')
+                else:
+                    # Skip if not a dict
+                    continue
                 
                 # Look for pancreas-related keywords
                 if any(keyword in sample_title or keyword in study_title 
                        for keyword in ['pancreas', 'pancreatic', 'islet', 'beta cell']):
                     processed_run = {
-                        'sample': run.get('run_accession', ''),
-                        'study': run.get('study_accession', ''),
-                        'condition': self._infer_condition(run.get('sample_title', '')),
-                        'library_layout': run.get('library_layout', ''),
-                        'fastq_ftp': run.get('fastq_ftp', ''),
-                        'first_public': run.get('first_public', ''),
-                        'sample_title': run.get('sample_title', ''),
-                        'study_title': run.get('study_title', ''),
+                        'sample': run_accession,
+                        'study': study_accession,
+                        'condition': self._infer_condition(sample_title),
+                        'library_layout': library_layout,
+                        'fastq_ftp': fastq_ftp,
+                        'first_public': first_public,
+                        'sample_title': sample_title,
+                        'study_title': study_title,
                         'discovered_at': datetime.now().isoformat()
                     }
                     pancreas_samples.append(processed_run)
