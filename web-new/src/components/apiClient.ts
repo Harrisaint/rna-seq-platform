@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const BASE = import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'
 console.log('API Base URL:', BASE)
 
 export async function apiGet<T>(path: string): Promise<T> {

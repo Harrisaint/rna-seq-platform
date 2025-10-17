@@ -1,7 +1,7 @@
 # RNA-Seq Platform Development Progress
 
 ## Current Status
-**Last Updated:** 2025-10-17 13:54
+**Last Updated:** 2025-10-17 13:57
 **Current Phase:** Initial Setup & Analysis
 
 ## Project Overview
@@ -17,6 +17,7 @@ RNA-Seq analysis platform with web interface, API backend, and automated pipelin
 - [x] Changed Demo Dataset background to #90ccfc as requested
 - [x] Removed opacity: 0.3 from DataStatusIndicator to fix dimmed Demo Dataset window
 - [x] Updated Demo Dataset background to #90caf9 to match Overview title and Static button colors exactly
+- [x] Updated API client to use Render backend URL https://rna-seq-platform-api.onrender.com instead of localhost
 
 ## Current Focus
 - Setting up comprehensive progress tracking for context preservation between chat sessions
