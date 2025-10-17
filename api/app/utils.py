@@ -73,6 +73,18 @@ def load_heatmap(mode: str = "demo") -> Dict[str, Any]:
     return _read_json(p) or {"rows": [], "cols": [], "values": []}
 
 
+@lru_cache(maxsize=2)
+def load_gsea(mode: str = "demo") -> List[Dict[str, Any]]:
+    """Load GSEA results for the specified mode"""
+    if mode == "demo":
+        p = safe_path("results", "gsea", "gsea_results.json")
+    else:  # live mode
+        p = safe_path("results", "live", "gsea", "gsea_results.json")
+    
+    data = _read_json(p)
+    return data or []
+
+
 def list_files_under(*sub: str) -> List[Dict[str, Any]]:
     base = safe_path(*sub)
     items: List[Dict[str, Any]] = []

@@ -40,6 +40,7 @@ const Navbar: React.FC<{ dark: boolean; toggleDark: () => void }> = ({ dark, tog
         <Button color="inherit" component={RouterLink} to="/expression">Expression</Button>
         <Button color="inherit" component={RouterLink} to="/de">Differential</Button>
         <Button color="inherit" component={RouterLink} to="/pathways">Pathways</Button>
+        <Button color="inherit" component={RouterLink} to="/gsea">GSEA</Button>
         <Button color="inherit" component={RouterLink} to="/explorer">Explorer</Button>
         
         <IconButton color="inherit" onClick={toggleDark} aria-label="toggle dark mode">

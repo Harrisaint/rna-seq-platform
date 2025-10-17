@@ -7,6 +7,7 @@ import Expression from './pages/Expression'
 import Differential from './pages/Differential'
 import Pathways from './pages/Pathways'
 import Explorer from './pages/Explorer'
+import GSEA from './pages/GSEA'
 import Navbar from './components/Navbar'
 
 // Create a wrapper component for each page that includes the data mode context
@@ -48,6 +49,7 @@ const App: React.FC = () => {
         <Route path="/expression" element={createPageWrapper(Expression, 'Expression Analysis')()} />
         <Route path="/de" element={createPageWrapper(Differential, 'Differential Expression')()} />
         <Route path="/pathways" element={createPageWrapper(Pathways, 'Pathway Analysis')()} />
+        <Route path="/gsea" element={createPageWrapper(GSEA, 'Gene Set Enrichment')()} />
         <Route path="/explorer" element={createPageWrapper(Explorer, 'Data Explorer')()} />
       </Routes>
       <footer style={{ padding: 16, textAlign: 'center', opacity: 0.7 }}>

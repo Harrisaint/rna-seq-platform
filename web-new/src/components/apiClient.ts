@@ -21,6 +21,7 @@ export const Api = {
   pca: (mode: 'demo' | 'live' = 'demo') => apiGet<{ scores: any[]; variance: { PC1: number; PC2: number } }>(`/pca?mode=${mode}`),
   heatmap: (mode: 'demo' | 'live' = 'demo') => apiGet<{ rows: string[]; cols: string[]; values: any }>(`/heatmap?mode=${mode}`),
   gene: (id: string, mode: 'demo' | 'live' = 'demo') => apiGet<any>(`/gene/${encodeURIComponent(id)}?mode=${mode}`),
+  gsea: (mode: 'demo' | 'live' = 'demo') => apiGet<{ results: any[]; gene_sets: string[] }>(`/gsea?mode=${mode}`),
   provenance: () => apiGet<any>(`/provenance`),
 }
 

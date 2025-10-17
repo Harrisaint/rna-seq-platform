@@ -52,6 +52,21 @@ class HeatmapPayload(BaseModel):
     values: List[List[float]] | List[Dict[str, float]]
 
 
+class GSEAResult(BaseModel):
+    pathway: str
+    description: str
+    size: int
+    es: float  # enrichment score
+    nes: float  # normalized enrichment score
+    pvalue: float
+    padj: float
+    leading_edge: Dict[str, Any]
+
+class GSEAPayload(BaseModel):
+    results: List[GSEAResult]
+    gene_sets: List[str]
+
+
 class Provenance(BaseModel):
     project_name: str
     config_path: str

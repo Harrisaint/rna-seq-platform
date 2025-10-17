@@ -6,7 +6,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import schemas
-from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, list_files_under, safe_path
+from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, load_gsea, list_files_under, safe_path
 
 app = FastAPI(title="RNA-seq Platform API")
 
@@ -82,6 +82,13 @@ def get_pca(mode: str = Query("demo", description="Data mode: 'demo' for curated
 @app.get("/heatmap", response_model=schemas.HeatmapPayload)
 def get_heatmap(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
     return load_heatmap(mode=mode)
+
+
+@app.get("/gsea", response_model=schemas.GSEAPayload)
+def get_gsea(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")):
+    results = load_gsea(mode=mode)
+    gene_sets = ["KEGG", "GO_BP", "GO_MF", "GO_CC", "REACTOME", "HALLMARK"]
+    return schemas.GSEAPayload(results=results, gene_sets=gene_sets)
 
 
 @app.get("/provenance", response_model=schemas.Provenance)

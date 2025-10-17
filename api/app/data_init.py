@@ -157,6 +157,66 @@ def create_demo_results():
     with open(de_dir / "heatmap.json", 'w') as f:
         json.dump(heatmap_data, f, indent=2)
     
+    # Create GSEA results
+    gsea_dir = results_dir / "gsea"
+    gsea_dir.mkdir(exist_ok=True)
+    
+    gsea_results = [
+        {
+            "pathway": "HALLMARK_APOPTOSIS",
+            "description": "Apoptosis pathway",
+            "size": 161,
+            "es": 0.45,
+            "nes": 1.8,
+            "pvalue": 0.001,
+            "padj": 0.01,
+            "leading_edge": {"tags": 0.3, "list": 0.2, "signal": 0.4}
+        },
+        {
+            "pathway": "KEGG_CELL_CYCLE",
+            "description": "Cell cycle regulation",
+            "size": 124,
+            "es": -0.38,
+            "nes": -1.6,
+            "pvalue": 0.002,
+            "padj": 0.015,
+            "leading_edge": {"tags": 0.25, "list": 0.18, "signal": 0.35}
+        },
+        {
+            "pathway": "GO_BP_DNA_REPAIR",
+            "description": "DNA repair process",
+            "size": 89,
+            "es": 0.42,
+            "nes": 1.7,
+            "pvalue": 0.003,
+            "padj": 0.02,
+            "leading_edge": {"tags": 0.28, "list": 0.22, "signal": 0.38}
+        },
+        {
+            "pathway": "REACTOME_SIGNALING_BY_RECEPTORS",
+            "description": "Receptor signaling",
+            "size": 156,
+            "es": -0.35,
+            "nes": -1.5,
+            "pvalue": 0.004,
+            "padj": 0.025,
+            "leading_edge": {"tags": 0.24, "list": 0.20, "signal": 0.33}
+        },
+        {
+            "pathway": "HALLMARK_OXIDATIVE_PHOSPHORYLATION",
+            "description": "Oxidative phosphorylation",
+            "size": 200,
+            "es": 0.40,
+            "nes": 1.6,
+            "pvalue": 0.005,
+            "padj": 0.03,
+            "leading_edge": {"tags": 0.26, "list": 0.19, "signal": 0.36}
+        }
+    ]
+    
+    with open(gsea_dir / "gsea_results.json", 'w') as f:
+        json.dump(gsea_results, f, indent=2)
+    
     print("Created demo analysis results")
     return True
 
