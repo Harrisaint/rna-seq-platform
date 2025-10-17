@@ -51,7 +51,7 @@ const Overview: React.FC<OverviewProps> = ({ mode, onModeChange, title }) => {
       >
         <Alert severity="error" sx={{ mb: 2 }}>
           <Typography variant="h6">API Error: {error}</Typography>
-          <Typography variant="body2">Make sure the backend is running on port 8000</Typography>
+          <Typography variant="body2">Make sure the backend is running and accessible</Typography>
         </Alert>
       </AnalysisLayout>
     )
