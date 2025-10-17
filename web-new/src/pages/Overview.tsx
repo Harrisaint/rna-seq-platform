@@ -103,7 +103,7 @@ const Overview: React.FC<OverviewProps> = ({ mode, onModeChange, title }) => {
       </Grid>
 
       {mode === 'demo' && (
-        <Box sx={{ mt: 4, p: 2, bgcolor: '#64b5f6', borderRadius: 1, color: 'white' }}>
+        <Box sx={{ mt: 4, p: 2, bgcolor: '#90ccfc', borderRadius: 1, color: 'white' }}>
           <Typography variant="h6" gutterBottom>
             Demo Dataset: PRJNA397172
           </Typography>
