@@ -60,7 +60,14 @@ const DataModeSelector: React.FC<DataModeSelectorProps> = ({ mode, onModeChange 
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
-            alignItems: 'center'
+            alignItems: 'center',
+            '&.Mui-selected': {
+              bgcolor: 'secondary.main',
+              color: 'white',
+              '&:hover': {
+                bgcolor: 'secondary.dark'
+              }
+            }
           }}
         >
           <UpdateIcon sx={{ fontSize: 32 }} />
@@ -74,8 +81,8 @@ const DataModeSelector: React.FC<DataModeSelectorProps> = ({ mode, onModeChange 
             label="Live" 
             size="small" 
             color="secondary" 
-            variant="outlined"
-            sx={{ mt: 1 }}
+            variant="filled"
+            sx={{ mt: 1, bgcolor: mode === 'live' ? 'white' : 'secondary.main', color: mode === 'live' ? 'secondary.main' : 'white' }}
           />
         </ToggleButton>
       </ToggleButtonGroup>

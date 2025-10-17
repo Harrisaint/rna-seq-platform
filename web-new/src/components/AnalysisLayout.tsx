@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Container, Typography, Paper } from '@mui/material'
 import DataModeSelector from './DataModeSelector'
 import DataStatusIndicator from './DataStatusIndicator'
+import LiveDiscoveryStatus from './LiveDiscoveryStatus'
 
 interface AnalysisLayoutProps {
   mode: 'demo' | 'live'
@@ -32,6 +33,8 @@ const AnalysisLayout: React.FC<AnalysisLayoutProps> = ({
         lastUpdated={lastUpdated}
         sampleCount={sampleCount}
       />
+      
+      <LiveDiscoveryStatus mode={mode} />
       
       <Paper elevation={2} sx={{ mt: 3, p: 3 }}>
         <Typography variant="h4" gutterBottom sx={{ 

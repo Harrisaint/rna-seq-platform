@@ -7,18 +7,25 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import schemas
 from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, load_gsea, list_files_under, safe_path
+from .live_discovery import discovery_service
 
 app = FastAPI(title="RNA-seq Platform API")
 
-# Initialize demo data on startup
+# Initialize demo data and start live discovery on startup
 @app.on_event("startup")
 async def startup_event():
-    """Initialize demo data when the API starts"""
+    """Initialize demo data and start live discovery when the API starts"""
     try:
         from .data_init import initialize_demo_data
         print("Starting data initialization...")
         initialize_demo_data()
         print("Data initialization completed successfully!")
+        
+        # Start live discovery service
+        print("Starting live discovery service...")
+        discovery_service.start_discovery()
+        print("Live discovery service started!")
+        
     except Exception as e:
         print(f"Warning: Data initialization failed: {e}")
         print("API will start but demo data may not be available")
@@ -106,6 +113,25 @@ def provenance():
         "report_html": str(safe_path("results", "outputs", f"{project_name}_report.html")) if safe_path("results", "outputs", f"{project_name}_report.html").exists() else None,
     }
     return schemas.Provenance(project_name=project_name, config_path=str(cfg_path), timestamps=timestamps)
+
+
+@app.get("/discovery/status")
+def get_discovery_status():
+    """Get live discovery service status"""
+    return discovery_service.get_discovery_status()
+
+
+@app.post("/discovery/trigger")
+def trigger_discovery():
+    """Manually trigger a discovery cycle"""
+    try:
+        new_samples = discovery_service.search_ena_pancreas_data(days_back=7)
+        if new_samples:
+            discovery_service.save_discovered_samples(new_samples)
+            discovery_service.generate_live_analysis_data()
+        return {"message": f"Discovery triggered. Found {len(new_samples)} new samples."}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/files")
