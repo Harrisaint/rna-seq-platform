@@ -8,3 +8,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: ALLOWED_ORIGINS
+        value: "https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app,http://localhost:5173"

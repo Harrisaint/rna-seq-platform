@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import List, Optional
+import os
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,10 +10,24 @@ from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, 
 
 app = FastAPI(title="RNA-seq Platform API")
 
+# Initialize demo data on startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize demo data when the API starts"""
+    try:
+        from .data_init import initialize_demo_data
+        print("Starting data initialization...")
+        initialize_demo_data()
+        print("Data initialization completed successfully!")
+    except Exception as e:
+        print(f"Warning: Data initialization failed: {e}")
+        print("API will start but demo data may not be available")
+
 import os
 
-# Get allowed origins from environment variable or default to localhost
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+# Get allowed origins from environment variable or default to localhost and common frontend domains
+DEFAULT_ORIGINS = "http://localhost:5173,https://rna-seq-platform.vercel.app,https://rna-seq-platform-web.vercel.app"
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
 print(f"ALLOWED_ORIGINS: {ALLOWED_ORIGINS}")
 
 app.add_middleware(

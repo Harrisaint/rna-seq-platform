@@ -2,49 +2,21 @@
   "report_general_stats_data": {
     "SRR5896247": {
       "FastQC": {
-        "total_sequences": 15000000,
-        "sequences_flagged_as_poor_quality": 750000,
-        "per_base_sequence_quality": "PASS",
-        "per_sequence_quality_scores": "PASS",
-        "per_base_sequence_content": "PASS",
-        "per_sequence_gc_content": "PASS",
-        "per_base_n_content": "PASS",
-        "sequence_length_distribution": "PASS",
-        "sequence_duplication_levels": "PASS",
-        "overrepresented_sequences": "PASS",
-        "adapter_content": "PASS"
+        "total_sequences": 1000000,
+        "percent_duplicates": 5.2,
+        "percent_gc": 45.8
       }
     },
     "SRR5896248": {
       "FastQC": {
-        "total_sequences": 12000000,
-        "sequences_flagged_as_poor_quality": 600000,
-        "per_base_sequence_quality": "PASS",
-        "per_sequence_quality_scores": "PASS",
-        "per_base_sequence_content": "PASS",
-        "per_sequence_gc_content": "PASS",
-        "per_base_n_content": "PASS",
-        "sequence_length_distribution": "PASS",
-        "sequence_duplication_levels": "PASS",
-        "overrepresented_sequences": "PASS",
-        "adapter_content": "PASS"
+        "total_sequences": 950000,
+        "percent_duplicates": 4.8,
+        "percent_gc": 46.1
       }
     }
   },
-  "report_data": {
-    "fastqc": {
-      "SRR5896247": {
-        "FastQC": {
-          "total_sequences": 15000000,
-          "sequences_flagged_as_poor_quality": 750000
-        }
-      },
-      "SRR5896248": {
-        "FastQC": {
-          "total_sequences": 12000000,
-          "sequences_flagged_as_poor_quality": 600000
-        }
-      }
-    }
-  }
+  "report_saved_raw_data": true,
+  "report_data_sources": [
+    "FastQC"
+  ]
 }

@@ -1,7 +1,17 @@
 {
   "scores": [
-    {"sample": "SRR5896247", "PC1": -1.2, "PC2": 0.8, "condition": "normal"},
-    {"sample": "SRR5896248", "PC1": 1.2, "PC2": -0.8, "condition": "tumor"}
+    {
+      "sample": "SRR5896247",
+      "PC1": 0.5,
+      "PC2": -0.3,
+      "condition": "normal"
+    },
+    {
+      "sample": "SRR5896248",
+      "PC1": -0.5,
+      "PC2": 0.3,
+      "condition": "tumor"
+    }
   ],
   "variance": {
     "PC1": 0.65,
