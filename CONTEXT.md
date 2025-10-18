@@ -117,4 +117,62 @@ A professional RNA-seq analysis platform with both demo and live discovery modes
 - LiveDiscoveryStatus with trigger button
 - GSEATable with color-coded results
 - PCAPlot with Plotly integration
+- VolcanoPlot and MAPlot with significance coloring
+- DEGTable with up/down regulation display
+
+## 🚀 Future Expansion Vision
+
+### **Multi-Dataset Biological Discovery Platform**
+The platform is designed to evolve from a cancer-focused RNA-seq tool into a comprehensive biological data discovery platform that can handle multiple data types and disease categories.
+
+### **🧬 RNA-seq Categories Beyond Cancer:**
+- **Disease-Focused**: Neurodegenerative (Alzheimer's, Parkinson's), Cardiovascular (heart failure, atherosclerosis), Metabolic (diabetes, obesity), Autoimmune (rheumatoid arthritis, lupus), Infectious (COVID-19, influenza), Developmental (autism, ADHD)
+- **Tissue/Organ-Specific**: Brain regions (cortex, hippocampus), Immune system (T-cells, B-cells), Muscle types (skeletal, cardiac), Epithelial tissues (skin, gut), Stem cells (embryonic, iPSC)
+- **Experimental Conditions**: Drug treatments, Environmental exposure, Dietary studies, Exercise studies, Aging studies
+
+### **🔬 Other Biological Computational Datasets:**
+- **Genomics**: Whole genome sequencing (WGS), Exome sequencing, ChIP-seq, ATAC-seq, Hi-C
+- **Proteomics**: Mass spectrometry, Protein-protein interactions, Post-translational modifications
+- **Metabolomics**: Metabolite profiling, Metabolic pathway analysis, Lipidomics
+- **Single-Cell Technologies**: scRNA-seq, scATAC-seq, Spatial transcriptomics, Multi-omics integration
+
+### **🗄️ SQL Database Strategy:**
+The current file-based persistence (CSV files) will be upgraded to SQLite database for:
+- **Complex queries** across multiple data types
+- **Relationships** between studies, samples, and metadata
+- **Data integrity** and duplicate prevention
+- **Scalability** for thousands of samples
+- **Advanced filtering** by disease, tissue, experimental condition
+
+### **📈 Implementation Phases:**
+1. **Phase 1**: SQL Database + Cancer Expansion (more cancer types, subtypes, stages)
+2. **Phase 2**: Disease Categories (neurodegenerative, cardiovascular, metabolic, autoimmune)
+3. **Phase 3**: Multi-Omics Integration (genomics, proteomics, metabolomics, single-cell)
+4. **Phase 4**: Advanced Analytics (cross-disease comparisons, biomarker discovery)
+
+### **💡 Unique Value Proposition:**
+- **"The Google of biological data"** - discover any type of biological dataset
+- **Cross-disease insights** - compare cancer vs. neurodegenerative vs. cardiovascular
+- **Multi-omics integration** - combine RNA-seq, genomics, proteomics
+- **Research acceleration** - find relevant datasets instantly
+
+## 🎯 Data Persistence Strategy
+
+### **Current Implementation:**
+- **File-based storage**: CSV files for samples, timestamps for updates
+- **Simple operations**: Load, save, check date
+- **ENA API fallback**: Mock cancer data when API fails
+- **Automatic population**: On backend restart from start of 2025
+
+### **Future SQL Implementation:**
+- **SQLite database**: For complex queries and relationships
+- **Tables**: studies, samples, discovery_log
+- **Benefits**: Data survives restarts, faster queries, better filtering
+- **Hybrid approach**: Files for simple cases, SQL for complex cases
+
+### **Implementation Considerations:**
+- **Start simple**: File-based persistence for current scale (8-50 samples)
+- **Upgrade to SQL**: When reaching 100+ samples or need complex queries
+- **Learning opportunity**: SQL skills for future projects
+- **Scalability**: Handle diverse data types and large datasets
 - DataModeSelector with enhanced Live mode styling
