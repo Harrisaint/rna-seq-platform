@@ -24,7 +24,7 @@ class LiveDiscoveryService:
         self.last_discovery = None
         self.discovered_samples = []
         
-    def search_ena_cancer_data(self, days_back: int = 30, organ_filter: str = None) -> List[Dict[str, Any]]:
+    def search_ena_cancer_data(self, days_back: int = 365, organ_filter: str = None) -> List[Dict[str, Any]]:
         """Search ENA for recent cancer RNA-seq data, optionally filtered by organ"""
         try:
             # Calculate date range
@@ -347,7 +347,7 @@ class LiveDiscoveryService:
                 print("Starting live discovery cycle...")
                 
                 # Search for new cancer data
-                new_samples = self.search_ena_cancer_data(days_back=30)
+                new_samples = self.search_ena_cancer_data(days_back=365)
                 
                 if new_samples:
                     # Save new samples
@@ -367,6 +367,31 @@ class LiveDiscoveryService:
             except Exception as e:
                 print(f"Error in discovery loop: {e}")
                 time.sleep(60)  # Wait 1 minute before retrying
+    
+    def populate_startup_data(self):
+        """Populate live data on startup with cancer RNA-seq from start of 2025"""
+        try:
+            print("Populating startup data with cancer RNA-seq from 2025...")
+            
+            # Search for cancer data from start of 2025
+            start_date = datetime(2025, 1, 1)
+            days_back = (datetime.now() - start_date).days
+            
+            if days_back > 0:
+                cancer_samples = self.search_ena_cancer_data(days_back=days_back)
+                
+                if cancer_samples:
+                    print(f"Found {len(cancer_samples)} cancer samples from 2025")
+                    self.save_discovered_samples(cancer_samples)
+                    self.generate_live_analysis_data()
+                    print("Startup data population completed successfully!")
+                else:
+                    print("No cancer samples found from 2025")
+            else:
+                print("Startup data population skipped - no data from 2025 yet")
+                
+        except Exception as e:
+            print(f"Error populating startup data: {e}")
     
     def start_discovery(self):
         """Start the live discovery service"""

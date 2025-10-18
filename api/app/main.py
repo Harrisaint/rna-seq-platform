@@ -21,7 +21,10 @@ async def startup_event():
         initialize_demo_data()
         print("Data initialization completed successfully!")
         
-        # Start live discovery service
+        # Populate startup data and start live discovery service
+        print("Populating startup data...")
+        discovery_service.populate_startup_data()
+        
         print("Starting live discovery service...")
         discovery_service.start_discovery()
         print("Live discovery service started!")
@@ -125,7 +128,7 @@ def get_discovery_status():
 def trigger_discovery(organ: str = None):
     """Manually trigger a discovery cycle with optional organ filter"""
     try:
-        new_samples = discovery_service.search_ena_cancer_data(days_back=30, organ_filter=organ)
+        new_samples = discovery_service.search_ena_cancer_data(days_back=365, organ_filter=organ)
         if new_samples:
             discovery_service.save_discovered_samples(new_samples)
             discovery_service.generate_live_analysis_data()

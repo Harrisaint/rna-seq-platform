@@ -67,15 +67,11 @@ const Differential: React.FC<DifferentialProps> = ({ mode, onModeChange, title }
         <Grid container spacing={3}>
           <Grid item xs={12} lg={6}>
             <Typography variant="h6" gutterBottom>Volcano Plot</Typography>
-            <Box sx={{ width: '100%', height: 500 }}>
-              <VolcanoPlot data={de} />
-            </Box>
+            <VolcanoPlot data={de} />
           </Grid>
           <Grid item xs={12} lg={6}>
             <Typography variant="h6" gutterBottom>MA Plot</Typography>
-            <Box sx={{ width: '100%', height: 500 }}>
-              <MAPlot data={de} />
-            </Box>
+            <MAPlot data={de} />
           </Grid>
           
           <Grid item xs={12}>

@@ -96,7 +96,7 @@ const MAPlot: React.FC<Props> = ({ data }) => {
       })
   }, [data])
   
-  return <div id="maplot" style={{ width: '100%', height: 400 }} />
+  return <div id="maplot" style={{ width: '100%', height: '500px', minHeight: '500px' }} />
 }
 
 export default MAPlot

@@ -96,7 +96,7 @@ const VolcanoPlot: React.FC<Props> = ({ data }) => {
         console.error('Failed to render volcano plot:', err)
       })
   }, [data])
-  return <div id="volcano" style={{ width: '100%', height: 400 }} />
+  return <div id="volcano" style={{ width: '100%', height: '500px', minHeight: '500px' }} />
 }
 
 export default VolcanoPlot
