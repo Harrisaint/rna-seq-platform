@@ -54,6 +54,10 @@ const DiscoveryStatus: React.FC<DiscoveryStatusProps> = ({
 }) => {
   const theme = useTheme()
   const [selectedTab, setSelectedTab] = useState(0)
+  const [diseaseStats, setDiseaseStats] = useState<Record<string, number>>({})
+  const [tissueStats, setTissueStats] = useState<Record<string, number>>({})
+  const [recentDiscoveries, setRecentDiscoveries] = useState<any[]>([])
+  const [loadingStats, setLoadingStats] = useState(false)
 
   const dataTypeIcons = {
     rna_seq: <ScienceIcon />,
@@ -98,6 +102,73 @@ const DiscoveryStatus: React.FC<DiscoveryStatusProps> = ({
         return theme.palette.grey[500]
     }
   }
+
+  // Fetch real data from API
+  const fetchDiseaseStats = async () => {
+    try {
+      setLoadingStats(true)
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/multi-omics/studies`)
+      const studies = await response.json()
+      
+      // Group by disease focus
+      const diseaseCounts: Record<string, number> = {}
+      studies.forEach((study: any) => {
+        const disease = study.disease_focus
+        diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1
+      })
+      
+      setDiseaseStats(diseaseCounts)
+    } catch (error) {
+      console.error('Failed to fetch disease stats:', error)
+    } finally {
+      setLoadingStats(false)
+    }
+  }
+
+  const fetchTissueStats = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/multi-omics/samples`)
+      const samples = await response.json()
+      
+      // Group by tissue type
+      const tissueCounts: Record<string, number> = {}
+      samples.forEach((sample: any) => {
+        const tissue = sample.tissue || sample.organ || 'unknown'
+        tissueCounts[tissue] = (tissueCounts[tissue] || 0) + 1
+      })
+      
+      setTissueStats(tissueCounts)
+    } catch (error) {
+      console.error('Failed to fetch tissue stats:', error)
+    }
+  }
+
+  const fetchRecentDiscoveries = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://rna-seq-platform-api.onrender.com'}/multi-omics/studies?limit=10`)
+      const studies = await response.json()
+      
+      // Convert to discovery format
+      const discoveries = studies.map((study: any) => ({
+        id: study.study_id,
+        title: `${study.disease_focus} ${study.data_type} Discovery`,
+        description: `Found ${study.sample_count} samples in ${study.tissue_type || 'various'} studies`,
+        timestamp: study.created_at,
+        status: 'success'
+      }))
+      
+      setRecentDiscoveries(discoveries)
+    } catch (error) {
+      console.error('Failed to fetch recent discoveries:', error)
+    }
+  }
+
+  // Load data when component mounts
+  useEffect(() => {
+    fetchDiseaseStats()
+    fetchTissueStats()
+    fetchRecentDiscoveries()
+  }, [])
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -289,36 +360,32 @@ const DiscoveryStatus: React.FC<DiscoveryStatusProps> = ({
                       Recent discovery activities across all data types
                     </Typography>
                     
-                    {/* Mock recent discoveries */}
-                    <List>
-                      <ListItem>
-                        <ListItemIcon>
-                          <CheckCircleIcon color="success" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="Cancer RNA-seq Discovery"
-                          secondary="Found 25 new samples in pancreas studies (2 hours ago)"
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemIcon>
-                          <CheckCircleIcon color="success" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="Neurodegenerative Genomics"
-                          secondary="Discovered 12 brain samples from Alzheimer's studies (4 hours ago)"
-                        />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemIcon>
-                          <WarningIcon color="warning" />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary="Cardiovascular Proteomics"
-                          secondary="Limited samples found in heart disease studies (6 hours ago)"
-                        />
-                      </ListItem>
-                    </List>
+                    {loadingStats ? (
+                      <Box sx={{ textAlign: 'center', py: 4 }}>
+                        <CircularProgress />
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                          Loading recent discoveries...
+                        </Typography>
+                      </Box>
+                    ) : recentDiscoveries.length > 0 ? (
+                      <List>
+                        {recentDiscoveries.map((discovery) => (
+                          <ListItem key={discovery.id}>
+                            <ListItemIcon>
+                              {getStatusIcon(discovery.status)}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={discovery.title}
+                              secondary={`${discovery.description} (${new Date(discovery.timestamp).toLocaleString()})`}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+                        No recent discoveries found. Try triggering a discovery!
+                      </Typography>
+                    )}
                   </Box>
                 )}
 
@@ -328,23 +395,40 @@ const DiscoveryStatus: React.FC<DiscoveryStatusProps> = ({
                       Discovery statistics by disease focus
                     </Typography>
                     
-                    <Grid container spacing={2}>
-                      {['cancer', 'neurodegenerative', 'cardiovascular', 'metabolic', 'autoimmune', 'infectious'].map((disease) => (
-                        <Grid item xs={12} sm={6} md={4} key={disease}>
-                          <Paper sx={{ p: 2, textAlign: 'center' }}>
-                            <Typography variant="h6" sx={{ textTransform: 'capitalize', mb: 1 }}>
-                              {disease}
+                    {loadingStats ? (
+                      <Box sx={{ textAlign: 'center', py: 4 }}>
+                        <CircularProgress />
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                          Loading disease statistics...
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Grid container spacing={2}>
+                        {Object.entries(diseaseStats).length > 0 ? (
+                          Object.entries(diseaseStats).map(([disease, count]) => (
+                            <Grid item xs={12} sm={6} md={4} key={disease}>
+                              <Paper sx={{ p: 2, textAlign: 'center' }}>
+                                <Typography variant="h6" sx={{ textTransform: 'capitalize', mb: 1 }}>
+                                  {disease}
+                                </Typography>
+                                <Typography variant="h4" color="primary">
+                                  {count}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Studies Found
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                          ))
+                        ) : (
+                          <Grid item xs={12}>
+                            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+                              No disease statistics available. Try triggering a discovery!
                             </Typography>
-                            <Typography variant="h4" color="primary">
-                              {Math.floor(Math.random() * 50) + 10}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Studies Found
-                            </Typography>
-                          </Paper>
-                        </Grid>
-                      ))}
-                    </Grid>
+                          </Grid>
+                        )}
+                      </Grid>
+                    )}
                   </Box>
                 )}
 
@@ -354,17 +438,34 @@ const DiscoveryStatus: React.FC<DiscoveryStatusProps> = ({
                       Discovery statistics by tissue type
                     </Typography>
                     
-                    <Grid container spacing={1}>
-                      {['brain', 'heart', 'liver', 'pancreas', 'lung', 'breast', 'blood', 'muscle'].map((tissue) => (
-                        <Grid item xs={6} sm={4} md={3} key={tissue}>
-                          <Chip
-                            label={`${tissue}: ${Math.floor(Math.random() * 30) + 5}`}
-                            variant="outlined"
-                            sx={{ mb: 1, width: '100%' }}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
+                    {loadingStats ? (
+                      <Box sx={{ textAlign: 'center', py: 4 }}>
+                        <CircularProgress />
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                          Loading tissue statistics...
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Grid container spacing={1}>
+                        {Object.entries(tissueStats).length > 0 ? (
+                          Object.entries(tissueStats).map(([tissue, count]) => (
+                            <Grid item xs={6} sm={4} md={3} key={tissue}>
+                              <Chip
+                                label={`${tissue}: ${count}`}
+                                variant="outlined"
+                                sx={{ mb: 1, width: '100%' }}
+                              />
+                            </Grid>
+                          ))
+                        ) : (
+                          <Grid item xs={12}>
+                            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+                              No tissue statistics available. Try triggering a discovery!
+                            </Typography>
+                          </Grid>
+                        )}
+                      </Grid>
+                    )}
                   </Box>
                 )}
               </Box>

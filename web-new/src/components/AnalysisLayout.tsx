@@ -40,7 +40,9 @@ const AnalysisLayout: React.FC<AnalysisLayoutProps> = ({
         body: JSON.stringify({
           data_type: dataType,
           disease_focus: diseaseFocus,
-          tissue_type: tissueType
+          tissue_type: tissueType === 'all' ? null : tissueType,
+          days_back: 30,
+          max_samples: 100
         })
       })
       const data = await response.json()
