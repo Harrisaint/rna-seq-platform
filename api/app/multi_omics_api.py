@@ -17,7 +17,7 @@ from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, 
 from .live_discovery import discovery_service
 from .multi_omics_discovery import MultiOmicsDiscoveryService
 from .data_types.framework import DataType, DiseaseFocus, TissueType, DataProcessorFactory
-from ..database.manager import DatabaseManager
+from .database.manager import DatabaseManager
 
 # Create router for multi-omics endpoints
 router = APIRouter()
