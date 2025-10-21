@@ -13,7 +13,7 @@ const Navbar: React.FC<{ dark: boolean; toggleDark: () => void }> = ({ dark, tog
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
           <ScienceIcon sx={{ mr: 1 }} />
           <Typography variant="h6" sx={{ mr: 3 }}>
-            RNA-seq Platform
+            Multi-Omics Platform
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Chip 
