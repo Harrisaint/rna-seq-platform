@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import schemas
 from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, load_gsea, list_files_under, safe_path
 from .live_discovery import discovery_service
+from .multi_omics_api import router as multi_omics_router
 
 app = FastAPI(title="RNA-seq Platform API")
 
@@ -46,6 +47,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include multi-omics API routes
+app.include_router(multi_omics_router)
 
 
 @app.get("/runs", response_model=List[schemas.Run])

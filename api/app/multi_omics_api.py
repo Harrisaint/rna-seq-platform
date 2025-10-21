@@ -8,7 +8,7 @@ import os
 import json
 from pathlib import Path
 
-from fastapi import FastAPI, Query, HTTPException, Depends
+from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -18,6 +18,9 @@ from .live_discovery import discovery_service
 from .multi_omics_discovery import MultiOmicsDiscoveryService
 from .data_types.framework import DataType, DiseaseFocus, TissueType, DataProcessorFactory
 from ..database.manager import DatabaseManager
+
+# Create router for multi-omics endpoints
+router = APIRouter()
 
 # Initialize enhanced discovery service
 multi_omics_discovery = MultiOmicsDiscoveryService()
@@ -62,7 +65,7 @@ class CrossOmicsRequest(BaseModel):
     parameters: Optional[Dict[str, Any]] = None
 
 # Multi-omics API endpoints
-@app.get("/multi-omics/studies", response_model=List[MultiOmicsStudy])
+@router.get("/multi-omics/studies", response_model=List[MultiOmicsStudy])
 def get_multi_omics_studies(
     data_type: Optional[str] = Query(None, description="Filter by data type"),
     disease_focus: Optional[str] = Query(None, description="Filter by disease focus"),
@@ -90,7 +93,7 @@ def get_multi_omics_studies(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving studies: {str(e)}")
 
-@app.get("/multi-omics/samples", response_model=List[MultiOmicsSample])
+@router.get("/multi-omics/samples", response_model=List[MultiOmicsSample])
 def get_multi_omics_samples(
     study_id: Optional[str] = Query(None, description="Filter by study ID"),
     data_type: Optional[str] = Query(None, description="Filter by data type"),
@@ -118,7 +121,7 @@ def get_multi_omics_samples(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving samples: {str(e)}")
 
-@app.post("/multi-omics/discovery/trigger")
+@router.post("/multi-omics/discovery/trigger")
 def trigger_multi_omics_discovery(request: DiscoveryRequest):
     """Trigger discovery for specific data type and disease focus"""
     try:
@@ -173,7 +176,7 @@ def trigger_multi_omics_discovery(request: DiscoveryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Discovery error: {str(e)}")
 
-@app.post("/multi-omics/discovery/comprehensive")
+@router.post("/multi-omics/discovery/comprehensive")
 def trigger_comprehensive_discovery(
     disease_focus: str = Query(..., description="Disease focus for comprehensive discovery"),
     tissue_type: Optional[str] = Query(None, description="Optional tissue type filter"),
@@ -238,7 +241,7 @@ def trigger_comprehensive_discovery(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Comprehensive discovery error: {str(e)}")
 
-@app.post("/multi-omics/analysis/{study_id}")
+@router.post("/multi-omics/analysis/{study_id}")
 def run_multi_omics_analysis(study_id: str, request: AnalysisRequest):
     """Run analysis on a specific study"""
     try:
@@ -286,7 +289,7 @@ def run_multi_omics_analysis(study_id: str, request: AnalysisRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis error: {str(e)}")
 
-@app.post("/multi-omics/cross-omics-analysis")
+@router.post("/multi-omics/cross-omics-analysis")
 def run_cross_omics_analysis(request: CrossOmicsRequest):
     """Run cross-omics analysis across multiple studies"""
     try:
@@ -324,7 +327,7 @@ def run_cross_omics_analysis(request: CrossOmicsRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cross-omics analysis error: {str(e)}")
 
-@app.get("/multi-omics/discovery/statistics")
+@router.get("/multi-omics/discovery/statistics")
 def get_discovery_statistics():
     """Get comprehensive discovery statistics"""
     try:
@@ -345,7 +348,7 @@ def get_discovery_statistics():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Statistics error: {str(e)}")
 
-@app.get("/multi-omics/data-types")
+@router.get("/multi-omics/data-types")
 def get_supported_data_types():
     """Get list of supported data types and their capabilities"""
     try:
@@ -377,7 +380,7 @@ def get_supported_data_types():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Data types info error: {str(e)}")
 
-@app.get("/multi-omics/analysis-results/{study_id}")
+@router.get("/multi-omics/analysis-results/{study_id}")
 def get_analysis_results(
     study_id: str,
     analysis_type: Optional[str] = Query(None, description="Filter by analysis type")
@@ -394,7 +397,7 @@ def get_analysis_results(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis results error: {str(e)}")
 
-@app.get("/multi-omics/health")
+@router.get("/multi-omics/health")
 def health_check():
     """Health check endpoint for multi-omics services"""
     try:
@@ -420,7 +423,7 @@ def health_check():
         }
 
 # Legacy endpoints for backward compatibility
-@app.get("/runs", response_model=List[schemas.Run])
+@router.get("/runs", response_model=List[schemas.Run])
 def get_runs(mode: str = Query("demo", description="Data mode: 'demo' for curated bioproject, 'live' for continuous discovery")) -> List[schemas.Run]:
     """Legacy endpoint - redirects to multi-omics samples"""
     if mode == "demo":
@@ -432,10 +435,4 @@ def get_runs(mode: str = Query("demo", description="Data mode: 'demo' for curate
         samples = db_manager.get_samples()
         return [schemas.Run(sample=s['sample_id'], study=s['study_id'], condition=s['condition']) for s in samples[:50]]  # Limit to 50 for performance
 
-# Add CORS middleware for multi-omics endpoints
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS is handled by the main app
