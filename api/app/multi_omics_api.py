@@ -16,8 +16,8 @@ from . import schemas
 from .utils import load_samples, load_multiqc, load_de, load_pca, load_heatmap, load_gsea, list_files_under, safe_path
 from .live_discovery import discovery_service
 from .multi_omics_discovery import MultiOmicsDiscoveryService
-from .data_types.framework import DataType, DiseaseFocus, TissueType, DataProcessorFactory
-from .database.manager import DatabaseManager
+from ..data_types.framework import DataType, DiseaseFocus, TissueType, DataProcessorFactory
+from ..database.manager import DatabaseManager
 
 # Create router for multi-omics endpoints
 router = APIRouter()
@@ -293,7 +293,7 @@ def run_multi_omics_analysis(study_id: str, request: AnalysisRequest):
 def run_cross_omics_analysis(request: CrossOmicsRequest):
     """Run cross-omics analysis across multiple studies"""
     try:
-        from .data_types.framework import MultiOmicsIntegrator
+        from ..data_types.framework import MultiOmicsIntegrator
         
         # Get studies
         studies = db_manager.get_studies()

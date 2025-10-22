@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import time
 import threading
 from .utils import safe_path, ROOT
-from .data_types.framework import DataType, DiseaseFocus, TissueType
+from ..data_types.framework import DataType, DiseaseFocus, TissueType
 
 class MultiOmicsDiscoveryService:
     """Enhanced discovery service supporting multiple data types and diseases"""
