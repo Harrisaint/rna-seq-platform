@@ -86,9 +86,13 @@ class LiveDiscoveryService:
                         # Skip if date parsing fails
                         continue
                 
-                # Look for cancer-related keywords
-                cancer_keywords = ['cancer', 'tumor', 'carcinoma', 'adenocarcinoma', 'sarcoma', 'lymphoma', 'leukemia', 'malignant', 'neoplasm']
-                if any(keyword in sample_title or keyword in study_title for keyword in cancer_keywords):
+                # Look for cancer-related keywords (more lenient)
+                cancer_keywords = ['cancer', 'tumor', 'carcinoma', 'adenocarcinoma', 'sarcoma', 'lymphoma', 'leukemia', 'malignant', 'neoplasm', 'cell line', 'hepg2', 'hela', 'mcf7', 'a549']
+                # Also include any sample that doesn't explicitly say "normal" or "control"
+                is_cancer_related = any(keyword in sample_title or keyword in study_title for keyword in cancer_keywords)
+                is_not_normal = not any(normal_word in sample_title.lower() or normal_word in study_title.lower() for normal_word in ['normal', 'control', 'healthy', 'wild type'])
+                
+                if is_cancer_related or (is_not_normal and len(sample_title) > 0):
                     # Determine organ/tissue type
                     organ = self._infer_organ(sample_title, study_title)
                     
