@@ -2,7 +2,7 @@
 -- Supports RNA-seq, Genomics, Proteomics, Metabolomics, and Single-Cell data
 
 -- Studies table - Main study/project information
-CREATE TABLE studies (
+CREATE TABLE IF NOT EXISTS studies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     study_id TEXT UNIQUE NOT NULL,
     title TEXT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE studies (
 );
 
 -- Samples table - Individual sample information
-CREATE TABLE samples (
+CREATE TABLE IF NOT EXISTS samples (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sample_id TEXT UNIQUE NOT NULL,
     study_id TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE samples (
 );
 
 -- Data files table - Links samples to their data files
-CREATE TABLE data_files (
+CREATE TABLE IF NOT EXISTS data_files (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sample_id TEXT NOT NULL,
     file_type TEXT NOT NULL,  -- 'fastq', 'bam', 'vcf', 'expression_matrix', 'protein_data', 'metabolite_data'
@@ -53,7 +53,7 @@ CREATE TABLE data_files (
 );
 
 -- Analysis results table - Stores analysis outputs
-CREATE TABLE analysis_results (
+CREATE TABLE IF NOT EXISTS analysis_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     study_id TEXT NOT NULL,
     analysis_type TEXT NOT NULL,  -- 'differential_expression', 'variant_calling', 'protein_quantification', 'metabolite_profiling', 'pathway_analysis'
@@ -65,7 +65,7 @@ CREATE TABLE analysis_results (
 );
 
 -- Discovery log table - Tracks data discovery activities
-CREATE TABLE discovery_log (
+CREATE TABLE IF NOT EXISTS discovery_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     discovery_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_type TEXT NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE discovery_log (
 );
 
 -- Gene annotations table - For RNA-seq and genomics
-CREATE TABLE gene_annotations (
+CREATE TABLE IF NOT EXISTS gene_annotations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     gene_id TEXT UNIQUE NOT NULL,
     gene_symbol TEXT,
@@ -96,7 +96,7 @@ CREATE TABLE gene_annotations (
 );
 
 -- Protein annotations table - For proteomics
-CREATE TABLE protein_annotations (
+CREATE TABLE IF NOT EXISTS protein_annotations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     protein_id TEXT UNIQUE NOT NULL,
     protein_name TEXT,
@@ -111,7 +111,7 @@ CREATE TABLE protein_annotations (
 );
 
 -- Metabolite annotations table - For metabolomics
-CREATE TABLE metabolite_annotations (
+CREATE TABLE IF NOT EXISTS metabolite_annotations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     metabolite_id TEXT UNIQUE NOT NULL,
     metabolite_name TEXT,
@@ -127,7 +127,7 @@ CREATE TABLE metabolite_annotations (
 );
 
 -- Pathways table - For pathway analysis across all data types
-CREATE TABLE pathways (
+CREATE TABLE IF NOT EXISTS pathways (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     pathway_id TEXT UNIQUE NOT NULL,
     pathway_name TEXT NOT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE pathways (
 );
 
 -- User preferences table - For future user authentication
-CREATE TABLE user_preferences (
+CREATE TABLE IF NOT EXISTS user_preferences (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT UNIQUE NOT NULL,
     preferred_data_types JSON,  -- Array of preferred data types
@@ -151,22 +151,22 @@ CREATE TABLE user_preferences (
 );
 
 -- Create indexes for better query performance
-CREATE INDEX idx_studies_data_type ON studies(data_type);
-CREATE INDEX idx_studies_disease_focus ON studies(disease_focus);
-CREATE INDEX idx_studies_tissue_type ON studies(tissue_type);
-CREATE INDEX idx_samples_study_id ON samples(study_id);
-CREATE INDEX idx_samples_condition ON samples(condition);
-CREATE INDEX idx_samples_tissue ON samples(tissue);
-CREATE INDEX idx_samples_organ ON samples(organ);
-CREATE INDEX idx_data_files_sample_id ON data_files(sample_id);
-CREATE INDEX idx_data_files_file_type ON data_files(file_type);
-CREATE INDEX idx_analysis_results_study_id ON analysis_results(study_id);
-CREATE INDEX idx_analysis_results_analysis_type ON analysis_results(analysis_type);
-CREATE INDEX idx_discovery_log_date ON discovery_log(discovery_date);
-CREATE INDEX idx_discovery_log_data_type ON discovery_log(data_type);
+CREATE INDEX IF NOT EXISTS idx_studies_data_type ON studies(data_type);
+CREATE INDEX IF NOT EXISTS idx_studies_disease_focus ON studies(disease_focus);
+CREATE INDEX IF NOT EXISTS idx_studies_tissue_type ON studies(tissue_type);
+CREATE INDEX IF NOT EXISTS idx_samples_study_id ON samples(study_id);
+CREATE INDEX IF NOT EXISTS idx_samples_condition ON samples(condition);
+CREATE INDEX IF NOT EXISTS idx_samples_tissue ON samples(tissue);
+CREATE INDEX IF NOT EXISTS idx_samples_organ ON samples(organ);
+CREATE INDEX IF NOT EXISTS idx_data_files_sample_id ON data_files(sample_id);
+CREATE INDEX IF NOT EXISTS idx_data_files_file_type ON data_files(file_type);
+CREATE INDEX IF NOT EXISTS idx_analysis_results_study_id ON analysis_results(study_id);
+CREATE INDEX IF NOT EXISTS idx_analysis_results_analysis_type ON analysis_results(analysis_type);
+CREATE INDEX IF NOT EXISTS idx_discovery_log_date ON discovery_log(discovery_date);
+CREATE INDEX IF NOT EXISTS idx_discovery_log_data_type ON discovery_log(data_type);
 
 -- Create views for common queries
-CREATE VIEW study_summary AS
+CREATE VIEW IF NOT EXISTS study_summary AS
 SELECT 
     s.id,
     s.study_id,
@@ -181,7 +181,7 @@ FROM studies s
 LEFT JOIN samples sa ON s.study_id = sa.study_id
 GROUP BY s.id, s.study_id, s.title, s.data_type, s.disease_focus, s.tissue_type, s.sample_count, s.created_at;
 
-CREATE VIEW sample_details AS
+CREATE VIEW IF NOT EXISTS sample_details AS
 SELECT 
     s.sample_id,
     s.study_id,
@@ -201,7 +201,7 @@ FROM samples s
 JOIN studies st ON s.study_id = st.study_id;
 
 -- Insert some initial pathway data
-INSERT INTO pathways (pathway_id, pathway_name, pathway_source, pathway_type, description, gene_count) VALUES
+INSERT OR IGNORE INTO pathways (pathway_id, pathway_name, pathway_source, pathway_type, description, gene_count) VALUES
 ('KEGG_00010', 'Glycolysis / Gluconeogenesis', 'kegg', 'metabolic', 'Core metabolic pathway for glucose breakdown', 65),
 ('KEGG_00020', 'Citrate cycle (TCA cycle)', 'kegg', 'metabolic', 'Central metabolic cycle for energy production', 30),
 ('KEGG_00030', 'Pentose phosphate pathway', 'kegg', 'metabolic', 'Alternative glucose metabolism pathway', 30),
