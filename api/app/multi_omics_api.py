@@ -7,6 +7,7 @@ from typing import List, Optional, Dict, Any
 import os
 import json
 from pathlib import Path
+from datetime import datetime
 
 from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -125,15 +126,77 @@ def get_multi_omics_samples(
 def trigger_multi_omics_discovery(request: DiscoveryRequest):
     """Trigger discovery for specific data type and disease focus"""
     try:
-        # For now, return a simple response without complex database operations
-        # This will help us test the endpoint without database issues
+        # Convert string enums to actual enum objects
+        data_type = DataType(request.data_type)
+        disease_focus = DiseaseFocus(request.disease_focus)
+        tissue_type = TissueType(request.tissue_type) if request.tissue_type else None
+        
+        # Search for data using the multi-omics discovery service
+        samples = multi_omics_discovery.search_multi_omics_data(
+            data_type=data_type,
+            disease_focus=disease_focus,
+            tissue_type=tissue_type,
+            days_back=request.days_back,
+            max_samples=request.max_samples
+        )
+        
+        # Save discovered samples to database
+        total_samples = 0
+        studies_created = []
+        
+        if samples:
+            # Create a study for this discovery
+            study_id = f"{request.data_type}_{request.disease_focus}_{len(samples)}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            
+            study_data = {
+                'study_id': study_id,
+                'title': f"{request.disease_focus.title()} {request.data_type.title()} Discovery",
+                'description': f"Discovered {len(samples)} samples for {request.disease_focus} {request.data_type}",
+                'data_type': request.data_type,
+                'disease_focus': request.disease_focus,
+                'tissue_type': request.tissue_type or 'unknown',
+                'experimental_condition': 'discovery',
+                'sample_count': len(samples)
+            }
+            
+            # Add study to database
+            db_manager.add_study(study_data)
+            studies_created.append(study_id)
+            
+            # Add samples to database
+            for sample in samples:
+                sample_data = {
+                    'sample_id': sample['sample'],
+                    'study_id': study_id,
+                    'condition': sample['condition'],
+                    'tissue': sample.get('tissue', ''),
+                    'organ': sample.get('organ', ''),
+                    'metadata': sample
+                }
+                db_manager.add_sample(sample_data)
+            
+            total_samples = len(samples)
+            
+            # Log discovery activity
+            discovery_log = {
+                'data_type': request.data_type,
+                'disease_focus': request.disease_focus,
+                'tissue_type': request.tissue_type or 'all',
+                'api_source': 'ena',
+                'query_used': f'{request.data_type}_{request.disease_focus}',
+                'samples_found': len(samples),
+                'samples_processed': len(samples),
+                'api_status': 'success',
+                'processing_time_seconds': 0
+            }
+            db_manager.log_discovery(discovery_log)
         
         return {
-            "message": f"Discovery triggered for {request.data_type} {request.disease_focus}",
-            "samples_found": 0,
-            "study_id": None,
+            "message": f"Discovery completed for {request.data_type} {request.disease_focus}",
+            "samples_found": total_samples,
+            "study_id": studies_created[0] if studies_created else None,
             "status": "success",
-            "note": "Discovery endpoint is working - database integration in progress"
+            "studies_created": studies_created
         }
         
     except Exception as e:
